@@ -29,41 +29,42 @@ class ConfigDir:
         
     def _set_default_values(self):
         self.db_exists = False
-        self.rt_settings = {}
+        self.settings = {}
         self.rt = None
         
     def update_settings(self, settings):
         db = self.get_db()
         db.update_settings(**settings)
+        self.settings = db.get_settings()
         
     def refresh(self):
         self._set_default_values()
         
         self.set_db_exists()
+        db = self.get_db()
         if not self.db_exists:
             # if database is new, create tables
-            db = self.get_db()
             db.create_tables()
             db.close()
         
-        self.get_rt_settings()
         self.get_rt_connection()
+        self.settings = db.get_settings()
         
-    def get_rt_settings(self):
+    def get_rt_url(self):
         db = self.get_db()
-        settings = db.query("SELECT * from settings")
-        for s in settings: self.rt_settings[s[0].encode()] = s[1]
-            
+        self.settings = db.get_settings()
+        
         self.rt_url = utils.build_url(
-                        self.rt_settings["host"],
-                        self.rt_settings["port"],
-                        self.rt_settings["username"],
-                        self.rt_settings["password"],
+                        self.settings["host"],
+                        self.settings["port"],
+                        self.settings["username"],
+                        self.settings["password"],
                         )
-        db.close()
+                        
+        return(self.rt_url)
         
     def get_rt_connection(self):
-        self.rt = utils.get_rtorrent_connection(self.rt_url)
+        self.rt = utils.get_rtorrent_connection(self.get_rt_url())
         self.tracker_cache = {}
         self.old_torrent_cache = []
         self.torrent_cache = []
