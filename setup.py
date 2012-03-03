@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os, sys
 
-version = __import__('dartui').__version__
+#version = __import__('dartui').__version__
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
@@ -25,7 +25,7 @@ classifiers = [
 
 setup(
     name="DarTui",
-    version=version,
+    version="0.9.0",
     url='https://github.com/cjlucas/dartui',
     author='Chris Lucas',
     author_email='chris@chrisjlucas.com',
