@@ -16,8 +16,8 @@ def build_torrent_info(torrent_list):
         torrent_list = [torrent_list]
         
     for t in torrent_list:
-        if os.path.exists(t.directory): 
-            ctime = os.stat(t.directory).st_ctime
+        if os.path.exists(t.base_path): 
+            ctime = os.stat(t.base_path).st_ctime
             time_added = formatters.format_time_difference(cur_time - ctime)
         else:
             ctime = None
