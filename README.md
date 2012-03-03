@@ -12,7 +12,7 @@ To Install:
 ```$ python setup.py install```
 
 To Run:
-```dartui```
+```$ dartui```
 
 TODO
 ----
