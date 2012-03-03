@@ -77,7 +77,7 @@ function Torrent(id) {
 		} else if (this.active == false) {
 			// if paused
 			status_msg = "Paused."
-			if (this.ctime != null) {
+			if (this.ctime != 0) {
 				status_msg = status_msg + " " + this.time_added + " old.";
 			} else {
 				setNotFound = true;
@@ -92,7 +92,7 @@ function Torrent(id) {
 			} else {
 				// if seeding
 				status_msg = "Seeding to " + this.peers_connected + " of " + this.total_peers + " peers available."
-				if (this.ctime != null) {
+				if (this.ctime != 0) {
 					status_msg = status_msg + " " + this.time_added + " old.";
 				} else {
 					setNotFound = true;

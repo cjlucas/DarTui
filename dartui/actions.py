@@ -20,7 +20,7 @@ def build_torrent_info(torrent_list):
             ctime = os.stat(t.base_path).st_ctime
             time_added = formatters.format_time_difference(cur_time - ctime)
         else:
-            ctime = None
+            ctime = 0
             time_added = "NOT FOUND"
             
         eta = formatters.calc_eta(t.down_rate, t.left_bytes)
