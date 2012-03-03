@@ -11,6 +11,7 @@ class Database:
         "show_torrent_age"  : True,
         "debug"             : False,
         "show_welcome"      : True,
+        "du_path"           : "/",
     }
     DATA_TYPES = {
         "host"              : str,
@@ -22,6 +23,7 @@ class Database:
         "show_torrent_age"  : bool,
         "debug"             : bool,
         "show_welcome"      : bool,
+        "du_path"           : str,
     }
     def __init__(self, db_path):
         self.db_path = db_path

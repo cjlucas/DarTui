@@ -335,10 +335,6 @@ body {
 	padding-bottom: 5px;
 	cursor: pointer;
 }
-/*.batch_play_icon, .batch_pause_icon, .batch_delete_icon,  {
-	padding-top: 5px;
-	padding-bottom: 5px;
-	}*/
 #conn_test_results {
 	font-size: .8em;
 	padding-left: 5px;
@@ -356,7 +352,7 @@ body {
 	font-size: .9em;
 }
 .settings label {
-	width: 150px;
+	width: 170px;
 	float: left;
 	margin-bottom: 10px;
 	

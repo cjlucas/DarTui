@@ -427,9 +427,9 @@ function buildSettings(currentSettings, showCurrentConnectionInfo) {
 			//"\u00a0" : { type : "button", value : "Test Connection", class : "test_conn_button" },
 		},
 		"DarTui" : {
-			
 			"Show Torrent Age" : { type : "checkbox", name : "show_torrent_age", value : "checked" },
 			"Debug Mode" : { type : "checkbox", name : "debug", value : "checked" },
+			"Disk Usage Path" : { type : "text", name : "du_path", info : "Default: /"}
 		}
 	};
 	
@@ -473,10 +473,12 @@ function buildSettings(currentSettings, showCurrentConnectionInfo) {
 			var input = $("<input>").attr(opts);
 			if (opts.type == "checkbox"){
 				input.prop("checked", currentSettings[opts.name]);
+			} else if (opts.type == "text") {
+				if ((section == "RTorrent" && showCurrentConnectionInfo) || (section != "RTorrent")) {
+					input.attr("value", currentSettings[opts.name]);
+				}
 			}
-			if (section == "RTorrent" && showCurrentConnectionInfo) {
-				input.attr("value", currentSettings[opts.name]);
-			}
+
 			form.append(label);
 			form.append(input);
 			form.append($("<br>"));
@@ -508,9 +510,7 @@ function addSettingsTriggers() {
 				data[field.attr("name")] = field.val();
 			}
 		});
-		console.log(data);
 		var retData = simpleAjaxCall("POST", "/test_connection", data);
-		console.log(retData);
 		$("#conn_test_results").removeClass("result_successful result_failed");
 		if (retData["success"] == true) {
 			$("#conn_test_results").addClass("result_successful").text("Connection Successful");

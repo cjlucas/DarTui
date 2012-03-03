@@ -35,7 +35,6 @@ class SetSettings:
         args = web.input()
         #print(args)
         settings = {}
-        #print(args.items())
         for key, data_type in sql.Database.DATA_TYPES.items():
             if data_type == bool:
                 # for options that use checkboxes (bool types)
@@ -113,7 +112,7 @@ class GetTorrents:
                 # return all torrents (plus extra info)
                 json_data["torrents"] = actions.build_torrent_info(torrents)        
             
-                du = utils.get_disk_usage("/")
+                du = utils.get_disk_usage(common.conf.settings["du_path"])
                 json_data["client_info"]["disk_free_str"] = formatters.format_size(du.free)
                 json_data["client_info"]["disk_total_str"] = formatters.format_size(du.total)
                 json_data["client_info"]["disk_free_percentage"] = formatters.format_percentage(du.free, du.total)
