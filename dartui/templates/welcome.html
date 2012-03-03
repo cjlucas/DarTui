@@ -1,0 +1,25 @@
+<html>
+	<head>
+		<link type="text/css" href="/static/css/jquery-ui-1.8.16.custom.css" rel="Stylesheet" />	
+		<link type="text/css" href="/static/css/dartui.css" rel="Stylesheet" />	
+		<script type="text/javascript" src="/static/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="/static/js/jquery-ui-1.8.16.custom.min.js"></script>
+		<script type="text/javascript" src="/static/js/jquery.ba-dotimeout.min.js"></script>
+		<script type="text/javascript" src="/static/js/dartui.js"></script>
+		<title>DarTui :: Welcome</title>
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="header"></div>
+			<div class="welcome">
+				
+			</div>
+		</div>
+	</body>
+	<script>
+	buildHeader({}, true)
+	$$(".welcome").html(buildSettings(simpleAjaxCall("GET", "/get_settings"), false))
+	addSettingsTriggers();
+	</script>
+	
+</html>

@@ -1,0 +1,394 @@
+body {
+	font-family: Helvetica, Verdana, Geneva, Arial, sans-serif;
+	color: #2d2d2d;
+	text-align: center;
+	margin: 0;
+	padding: 0;
+	background-color: #f9f9f9;
+}
+.shadow {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	background-color: #2d2d2d;
+	z-index: 2;
+	opacity: 0.0;
+	display: none;
+}
+.wrapper {
+	width: 90%;
+	max-width: 1000px;
+	margin: auto;
+	position: relative;
+}
+.dropdown {
+	width: 80%;
+	position: absolute;
+	background-color: white;
+	border: 1px solid #b9b9b9;
+	border-top: 0px;
+	z-index: 3;
+	display: none;
+}
+.dropdown_close_button {
+	position: absolute;
+	top: 0;
+	right: 0;
+	cusor: pointer;
+	margin-top: 5px;
+	margin-right: 5px;
+}
+.header {
+	height: 50px;
+	position: relative;
+}
+.logo {
+	position: absolute;
+	bottom: 0;
+	left: 20px;
+
+	font-size: 2em;
+	font-family: arial black;
+}
+.client_info {
+	vertical-align: middle;
+	
+	position: absolute;
+	left: 50%;
+	bottom: 5%;
+	width: 500px;
+	margin-left: -250px;
+	font-size: .9em;
+}
+.client_info div {
+	padding-top: 5px;
+}
+.client_info b {
+	font-weight: 600;
+}
+.icons {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+}
+.header_icon {
+	cursor: pointer;
+	padding-left: 3px;
+	padding-right: 3px;
+}
+.sort_header {
+	background-color: #2d2d2d;
+	color: white;
+	height: 30px;
+	font-size: .8em;
+	background: #2d2d2d url(images/ui-bg_highlight-soft_20_2d2d2d_1x100.png) 50% 50% repeat-x;
+}
+
+.ui-icon {
+	vertical-align: middle;
+	display: inline-block;
+	background-image: none;
+	margin-right: 2%;
+}
+.ui-icon-triangle-1-s, .ui-icon-triangle-1-n {
+	background-image: url(images/ui-icons_ffffff_256x240.png);
+}
+.sort_link_set {
+	line-height: 30px; /* needs to be equal to height in .sort_header */
+}
+.sort_link {
+	margin-left: 1%;
+}
+.sort_link_active {
+	font-weight: bold;
+	/*text-decoration: underline;*/
+}
+.rows_wrapper {
+	position: relative;
+}
+.torrent_name {
+	font-size: .8em;
+	font-weight: 700;
+}
+.time_remaining, .torrent_size, .torrent_status, .torrent_message {
+	color: #3e3e3e;
+	font-size: .7em;
+	font-style: italic;
+}
+.torrent_message {
+	color: #8a8a8a;
+	padding-left: 5px;
+}
+.torrent_status {
+	clear: both;
+}
+.current_speed {
+	font-size: .75em;
+}
+.current_speed, .torrent_size {
+	padding-right: 10px;
+}
+.torrent_name, .current_speed {
+	padding-bottom: 2px;
+}
+.torrent_row, .dropdown_container {
+	border-color: #b9b9b9;
+	border-style: solid;
+	text-align: left;
+}
+.torrent_row {
+	overflow: hidden;
+	display: block;
+	position: relative;
+				
+	border-left-width: 1px;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 0px;
+				
+	height: 50px;
+	padding-bottom: 5px;
+	padding-top: 5px;
+				
+}
+.torrent_row_even {
+	background-color: #ededed;
+}
+.torrent_row_odd {
+	background-color: #e0e0e0;
+}
+.torrent_row_selected {
+	background-color: #f4e8a6;
+}
+.torrent_row_bottom {
+	/* 
+	  because "border: collapse" doesn't work like it does with td tags
+	  we don't have a bottom border to prevent pixel doubling.
+	  so we have to give the last row of the torrent list this class
+	  to set the bottom border
+	*/
+	border-bottom-width: 1px;	
+}
+.error_message {
+	font-size: .9em;
+	text-align: center;
+}
+.checkbox_container, .action_container {
+	display: table-cell;
+	text-align: center;
+	vertical-align: middle;
+}
+.checkbox_container {
+	width: 40px; 
+}
+.action_container {
+	width: 20px;
+}
+.torrent_name_eta_container {
+	/*display: inline-block;*/ /* not needed */ 
+	position: absolute; 
+	top: 5px; 
+	left: 70px;
+}
+.torrent_name {
+	/*display: inline;*/
+	overflow: hidden;
+}
+.torrent_message {
+	font-size: .6em;
+}
+.torrent_error {
+	color: #ea1a2d;
+}
+.time_remaining {
+	/*clear: both;
+	/*display: inline;*/
+	padding-top: 2px;
+}
+.torrent_down_speed, .torrent_up_speed {
+	padding-right: 5px;
+}
+.speed_size_container {
+	/*display: inline-block;*/ /* not needed */ 
+	position: absolute; 
+	top: 5px; 
+	right: 0px;
+	text-align: right;
+}
+.progressbar_container {
+	position: absolute; 
+	height: 15px; 
+	left: 70px; 
+	right: 10px; 
+	bottom: 5px;
+}
+.play_pause_icon {
+	padding-bottom: 10px;
+}
+.play_pause_icon, .delete_icon, .sort_link, .filter_menu_header_clear {
+	cursor: pointer;
+}
+.dropdown_trigger_area {
+	display: inline; 
+	z-index: 0; 
+	position: absolute; 
+	background-color: none; 
+	top: 0; 
+	left: 70px; 
+	right: 0; 
+	bottom: 0;
+}
+.dropdown_container {
+	display: none;
+	height: 200px; 
+	background-color: white;
+	border-left-width: 1px;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 0px;
+}
+.dropdown_container_bottom {
+	border-bottom-width: 1px;
+	border-top-width: 0px;
+}
+.filter_menu {
+	position: fixed;
+	right: -150px;
+	top: 0;
+	/*display: none;*/
+	z-index: 1;
+	background-color: white;
+	text-align: left;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 10px;
+	
+	border-color: #b9b9b9;
+	border-style: solid;
+	border-left-width: 1px;
+	border-right-width: 0px;
+	border-top-width: 1px;
+	border-bottom-width: 1px;
+}
+.filter_menu_header {
+	position: relative;
+	color: #a0a0a0;
+	border-bottom: 1px solid #a0a0a0;
+	margin-top: 10px;
+	margin-bottom: 6px;
+}
+.filter_menu_header_name {
+	font-size: .9em;
+}
+.filter_menu_header_clear {
+	position: absolute;
+	font-size: .7em;
+	right: 5px;
+	bottom: 0;
+}
+.filter_row {
+	padding-top: 5px;
+	padding-left: 5px;
+	font-size: .8em;
+}
+.filter_label {
+	margin-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 10px;
+}
+.filter_label_selected {
+	/*font-weight: 700; don't support this yet, adding this class causes the filter menu to widen, which is really ugly */
+}
+.progressbar-error {
+	border: 1px solid #aaaaaa; background: #ea1a2d url(images/ui-bg_highlight-soft_50_ea1a2d_1x100.png) 50% 50% repeat-x; color: #222222; font-weight: bold;
+}
+.progressbar-complete {
+	border: 1px solid #aaaaaa; background: #34b915 url(images/ui-bg_highlight-soft_50_34b915_1x100.png) 50% 50% repeat-x; color: #222222; font-weight: bold;
+}
+.progressbar-downloading {
+	border: 1px solid #aaaaaa; background: #1771ca url(images/ui-bg_highlight-soft_40_1771ca_1x100.png) 50% 50% repeat-x; color: #222222; font-weight: bold;
+}
+.progressbar-inactive {
+	border: 1px solid #aaaaaa; background: #a3a3a3 url(images/ui-bg_highlight-soft_50_a3a3a3_1x100.png) 50% 50% repeat-x; color: #222222; font-weight: bold;
+}
+.batch_actions {
+	position: fixed;
+	bottom: 50px;
+	left: -55px;
+	/*height: 100px;*/
+	width: 50px;
+	z-index: 1;
+	background-color: #2d2d2d;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-right: 5px;
+	-moz-border-radius-topright: 20px;
+	-webkit-border-top-right-radius: 20px;
+	border-top-right-radius: 20px;
+	-moz-border-radius-bottomright: 20px;
+	-webkit-border-bottom-right-radius: 20px;
+	border-bottom-right-radius: 20px;
+	
+}
+.batch_actions img {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	cursor: pointer;
+}
+/*.batch_play_icon, .batch_pause_icon, .batch_delete_icon,  {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	}*/
+#conn_test_results {
+	font-size: .8em;
+	padding-left: 5px;
+	font-weight: 700;
+}
+.result_successful {
+	color: #34b915;
+}
+.result_failed {
+	color: #ea1a2d;
+}
+.settings {
+	padding-left: 50px;
+	text-align: left;
+	font-size: .9em;
+}
+.settings label {
+	width: 150px;
+	float: left;
+	margin-bottom: 10px;
+	
+}
+.settings input, .settings select {
+}
+input[type="text"], input[type="password"] {
+	border: 1px solid #b9b9b9;
+}
+br {
+	clear: left;
+}
+.default_value {
+	font-size: .7em;
+}
+.welcome {
+	background-color: white;
+	border: 1px solid #b9b9b9;
+	margin-top: 1em;
+}
+.welcome_title {
+	text-align: left;
+	font-size: 1.5em;
+	color: #a0a0a0;
+	border-bottom: 1px solid #b9b9b9;
+	padding-bottom: 5px;
+	/*margin-left: 50px;*/
+	margin-right: 20px;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+.footer {
+	text-align: center;
+	font-size: .7em;
+}

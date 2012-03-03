@@ -1,0 +1,13 @@
+/*.komodoproject
+/*.*project
+/temp
+*.pyc
+*~
+*.swp
+/__pycache__
+/logs
+/tests
+/dartui/tests
+/build
+/dist
+/*egg-info

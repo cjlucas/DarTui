@@ -1,0 +1,23 @@
+import web
+import os
+
+urls = (
+    "/", "dartui.pages.Index",
+    "/welcome", "dartui.pages.Welcome",
+    "/set_settings", "dartui.pages.SetSettings",
+    "/get_torrents", "dartui.pages.GetTorrents",
+    "/get_settings", "dartui.pages.GetSettings",
+    "/refresh_rows", "dartui.pages.RefreshRows",
+    "/torrent", "dartui.pages.TorrentAction",
+    "/test_connection", "dartui.pages.TestConnection"
+)
+
+os.chdir(os.path.dirname(__file__))
+_template_dir = os.path.join(os.path.dirname(__file__), "templates/")
+
+render = web.template.render(_template_dir, globals=globals()) # TODO: globals param is insecure, change it
+
+
+def run_server(http_ip, http_port):
+    app = web.application(urls, globals())
+    web.httpserver.runsimple(app.wsgifunc(), (http_ip, http_port))

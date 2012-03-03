@@ -1,0 +1,43 @@
+$def with (torrents_json, settings_json)
+
+<html>
+	<head>
+		<link type="text/css" href="/static/css/jquery-ui-1.8.16.custom.css" rel="Stylesheet" />	
+		<link type="text/css" href="/static/css/dartui.css" rel="Stylesheet" />	
+		<script type="text/javascript" src="/static/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="/static/js/jquery-ui-1.8.16.custom.min.js"></script>
+		<script type="text/javascript" src="/static/js/jquery.ba-dotimeout.min.js"></script>
+		<script type="text/javascript" src="/static/js/dartui.js"></script>
+		<title></title>
+	</head>
+	<body>
+		<div class="shadow"></div>
+		<div class="wrapper">
+			<div class="dropdown"></div>
+			<div class="header"></div>
+			<div class="batch_actions">
+				<div><img class="batch_play_icon" title="Start Torrents" src="/static/imgs/play_icon_white.png" /></div>
+				<div><img class="batch_pause_icon" title="Pause Torrents" src="/static/imgs/pause_icon_white.png" /></div>
+				<div><img class="batch_delete_icon" title="Delete Torrents" src="/static/imgs/delete_icon_white.png" /></div>
+				<div><img class="batch_rehash_icon" title="Rehash Torrents" src="/static/imgs/rehash_icon_white.png" /></div>
+			</div>
+			<div class="filter_menu"></div>
+			<div class="sort_header"></div>
+			<form>
+				<div class="rows_wrapper"></div>
+			</form>
+			<div class="footer"></div>
+			<script>
+				torrentData = $:torrents_json;
+				gSettingsArray = $:settings_json;
+				$$("title").text("DarTui :: " + gSettingsArray["host"] + ":" + gSettingsArray["port"]);
+				addSortHeader();
+				processTorrentData(torrentData);
+				addTriggers();
+				buildHeader(torrentData["client_info"]);
+				buildFooter(torrentData["client_info"]);
+				var refreshID = setInterval(refreshRows, gSettingsArray["refresh_rate"]*1000);
+			</script>
+		</div>
+	</body>
+</html>
