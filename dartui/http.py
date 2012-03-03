@@ -15,7 +15,7 @@ urls = (
 os.chdir(os.path.dirname(__file__))
 _template_dir = os.path.join(os.path.dirname(__file__), "templates/")
 
-render = web.template.render(_template_dir, globals=globals()) # TODO: globals param is insecure, change it
+render = web.template.render(_template_dir)
 
 
 def run_server(http_ip, http_port):
