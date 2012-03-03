@@ -110,9 +110,14 @@ class GetTorrents:
         
             else:
                 # return all torrents (plus extra info)
+                try:
+                    du = utils.get_disk_usage(common.conf.settings["du_path"])
+                except OSError:
+                    print("{0} not found".format(common.conf.settings["du_path"]))
+                    du = utils.get_disk_usage("/")
+                    
                 json_data["torrents"] = actions.build_torrent_info(torrents)        
             
-                du = utils.get_disk_usage(common.conf.settings["du_path"])
                 json_data["client_info"]["disk_free_str"] = formatters.format_size(du.free)
                 json_data["client_info"]["disk_total_str"] = formatters.format_size(du.total)
                 json_data["client_info"]["disk_free_percentage"] = formatters.format_percentage(du.free, du.total)
