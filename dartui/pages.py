@@ -13,8 +13,9 @@ import common
 import formatters
 import sql
 import utils
+import http
 
-render = common.render
+render = http.render
 to_json = utils.to_json
 
 class Index:
