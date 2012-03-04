@@ -1,5 +1,5 @@
-v0.9.1
------------------
+v0.9.1 (March 4, 2012)
+----------------------
 - added support for a custom disk usage path
 - added a favicon
 - added gzip compression support
