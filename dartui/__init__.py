@@ -4,7 +4,7 @@ import common
 import config
 import actions
 
-__version__ = "0.9.0"
+__version__ = "0.9.1"
 __author__ = "Chris Lucas"
 __contact__ = "chris@chrisjlucas.com"
 __license__ = "MIT"

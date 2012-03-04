@@ -25,7 +25,7 @@ classifiers = [
 
 setup(
     name="DarTui",
-    version="0.9.0",
+    version="0.9.1",
     url='https://github.com/cjlucas/dartui',
     author='Chris Lucas',
     author_email='chris@chrisjlucas.com',
