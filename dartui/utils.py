@@ -3,6 +3,9 @@ import os
 import xmlrpclib
 from urlparse import parse_qs
 from collections import namedtuple
+from gzip import GzipFile
+from StringIO import StringIO
+
 try:
     import simplejson as json
 except ImportError:
@@ -10,6 +13,14 @@ except ImportError:
 
 def to_json(input):
     return(json.dumps(input))
+    
+def decompress_gzip(data):
+    f = StringIO()
+    f.write(data)
+    f.seek(0)
+    
+    g = GzipFile(fileobj=f, mode="rb")
+    return(g.read())
     
 def deserialize_args(args):
     """Try to deserialize given args. Return input if not serialized"""

@@ -6,6 +6,8 @@ import time
 import random
 import simplejson as json
 from urlparse import parse_qs
+from gzip import GzipFile
+from StringIO import StringIO
 
 #from actions import build_torrent_info, perform_torrent_action
 import actions
@@ -18,22 +20,36 @@ import http
 render = http.render
 to_json = utils.to_json
 
+def process_output(data):
+    """process data for browser, include headers"""
+    f = StringIO()
+    if isinstance(data, web.template.TemplateResult):
+        data = data["__body__"]
+    if "gzip" in web.ctx.env.get("HTTP_ACCEPT_ENCODING", ""):
+        web.header("Content-encoding", "gzip")
+        g = GzipFile(fileobj=f, mode="wb")
+        g.write(data)
+        g.close()
+    else:
+        f.write(data)
+    
+    f.seek(0)
+    return(f.read())
+
 class Index:
     def GET(self):
-        db = common.conf.get_db()
-        if db.settings["show_welcome"]:
+        if common.conf.settings["show_welcome"]:
             raise(web.seeother("/welcome"))
         else:
-            return(render.index(GetTorrents().GET(), GetSettings().GET()))
+            return(process_output(render.index(GetTorrents().main(), GetSettings().main())))
         
 class Welcome:
     def GET(self):        
-        return(render.welcome())
+        return(process_output(render.welcome()))
         
 class SetSettings:
     def POST(self):
         args = web.input()
-        #print(args)
         settings = {}
         for key, data_type in sql.Database.DATA_TYPES.items():
             if data_type == bool:
@@ -70,7 +86,7 @@ class SetSettings:
         raise(web.seeother("/"))
         
 class GetSettings:
-    def GET(self):
+    def main(self):
         db = common.conf.get_db()
         settings = db.get_settings()
         db.close()
@@ -78,9 +94,13 @@ class GetSettings:
         if settings["password"] is not None:
             settings["password"] = "*" * len(settings["password"])
         return(to_json(settings))
+        
+    def GET(self):
+        """ only call process_output() if data is being sent to immediately to browser"""
+        return(process_output(self.main()))
 
 class GetTorrents:
-    def GET(self):
+    def main(self):
         args = web.input()
         rpc_ids = args.get("rpc_id", None)
         rt = common.conf.get_rt()
@@ -132,6 +152,10 @@ class GetTorrents:
       
         return(to_json(json_data))
         
+    def GET(self):
+        """ only call process_output() if data is being sent to immediately to browser"""
+        return(process_output(self.main()))
+        
 class TorrentAction:
     def GET(self):
         args = web.input()
@@ -160,7 +184,7 @@ class TorrentAction:
                 
             
         print(json_data)
-        return(to_json(json_data))
+        return(process_output(to_json(json_data)))
         
         
 class TestConnection:
@@ -174,4 +198,4 @@ class TestConnection:
         
         url = utils.build_url(host, port, username, password)
         conn_status = utils.test_xmlrpc_connection(url)
-        return(to_json(conn_status))
+        return(process_output(to_json(conn_status)))
