@@ -21,3 +21,4 @@ TODO
 - HTTPS support
 - Basic HTTP authentication support
 - Torrent details view (file/peers/trackers)
+- Mobile interface
