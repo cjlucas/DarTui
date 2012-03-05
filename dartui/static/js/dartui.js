@@ -487,7 +487,7 @@ function buildSettings(currentSettings, showCurrentConnectionInfo) {
 			var input = $("<input>").attr(opts);
 			if (opts.type == "checkbox"){
 				input.prop("checked", currentSettings[opts.name]);
-			} else if (opts.type == "text") {
+			} else if (opts.type == "text" || opts.type == "password") {
 				if ((section == "RTorrent" && showCurrentConnectionInfo) || (section != "RTorrent")) {
 					input.attr("value", currentSettings[opts.name]);
 				}
