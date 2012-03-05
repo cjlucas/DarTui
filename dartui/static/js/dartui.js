@@ -596,6 +596,11 @@ function buildFilterMenu() {
 		.filter(function() { return $(this).prev().data("filter-type") == filterType})
 		.removeClass("filter_label_selected");
 		
+		// check if active filter icon should be removed
+		if ($(".filter_checkbox").filter(":checked").length == 0) {
+			$(".filters_icon").attr("src", "/static/imgs/filters_icon_hover.png");
+		}
+		
 		gRpcIdArrayCurrentView = sortTorrents(filterTorrents(gRpcIdArray));
 		buildTorrentRows(gRpcIdArrayCurrentView);
 	})
@@ -606,6 +611,7 @@ function buildFilterMenu() {
 			$(".filters_icon").attr("src", "/static/imgs/filters_icon_active.png");
 		} else {
 			$(this).next().removeClass("filter_label_selected");
+			// check if active filter icon should be removed
 			if ($(".filter_checkbox").filter(":checked").length == 0) {
 				$(".filters_icon").attr("src", "/static/imgs/filters_icon_hover.png");
 			}
@@ -951,30 +957,30 @@ function addTriggers() {
 	})
 	$(document.body).keydown(function (e) {
 		log(e);
-		/* keyCodes:
-		27 = esc
-		65 = a
-		*/
-		if (e.keyCode == 27) {
+		// for security
+		if (e.metaKey) { return }
+		
+		if (e.keyCode == 27) { // esc
 			deselectAllTorrentRowCheckBoxes();
-		} else if (e.keyCode == 65) {
-			if (e.altKey) {
-				$('.row_checkbox').prop("checked", true);
-				$('.torrent_row').addClass("torrent_row_selected");
-				toggleBatchActions("show");
-				// update selected torrent data
-				buildFooter();
-			}
+		} else if (e.keyCode == 65 && e.altKey) { // alt+a
+			$('.row_checkbox').prop("checked", true);
+			$('.torrent_row').addClass("torrent_row_selected");
+			toggleBatchActions("show");
+			// update selected torrent data
+			buildFooter();
+		} else if (e.keyCode == 70) { // f
+			toggleFilterMenu();
 		}
+		
 		/* batch action shortcuts */
 		if (!batchActionsHidden) {
-			if (e.keyCode == 83) {
+			if (e.keyCode == 83) { // s
 				batchPerformTorrentAction("start");
-			} else if (e.keyCode == 80) {
+			} else if (e.keyCode == 80) { // p
 				batchPerformTorrentAction("stop");
-			} else if (e.keyCode == 68) {
+			} else if (e.keyCode == 68) { // d
 				batchPerformTorrentAction("delete");
-			} else if (e.keyCode == 82) {
+			} else if (e.keyCode == 82) { // r
 				batchPerformTorrentAction("rehash");
 			}
 		}
