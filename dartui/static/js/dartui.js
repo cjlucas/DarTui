@@ -10,6 +10,7 @@ var gTorrentArray = {};
 var gRpcIdArray = [];
 var gRpcIdArrayCurrentView = [];
 var gFiltersArray = {};
+var gClientInfo = {};
 var gErrorCode = 0;
 
 /* keep track of if the window is scrolling or not.
@@ -174,7 +175,7 @@ function handleTorrentCheckBoxSelection(elem, event) {
 	var checkBoxArray = $(".row_checkbox");
 	var torrentRowArray = $(".torrent_row");
 	var checkBoxIndex = checkBoxArray.index(elem);
-				
+					
 	if (elem.is(":checked")) {
 		if (event.shiftKey) {
 			log("shift key pressed");
@@ -206,6 +207,8 @@ function handleTorrentCheckBoxSelection(elem, event) {
 			lastBoxChecked = null;
 		}
 	}
+	// update selected torrent data	
+	buildFooter();
 }
 
 function processTorrentData(data) {
@@ -238,7 +241,8 @@ function processTorrentData(data) {
 	gFiltersArray["trackers"] = data["trackers"];
 	buildStatusFilters();
 	
-	updateHeader(data["client_info"]);
+	gClientInfo = data["client_info"];
+	updateHeader();
 	
 	var newRpcIdArrayFilteredAndSorted = sortTorrents(filterTorrents(newRpcIdArray.slice(0)));
 	
@@ -342,11 +346,21 @@ function toggleFilterMenu() {
 	
 }
 
-function buildFooter(clientInfo) {
+function buildFooter() {
 	var footerDiv = $("<div>");
+	var numTorrentsTotal = gRpcIdArray.length;
+	var numTorrentsCurrentView = gRpcIdArrayCurrentView.length;
+	var numTorrentsSelected = $(".torrent_row_selected").length;
 	
-	footerDiv.append($("<p>").text("rTorrent " + clientInfo["client_version"] + " - libTorrent " + clientInfo["library_version"]));
-	footerDiv.append($("<p>").text("DarTui v" + clientInfo["dartui_version"]));
+	var numTorrentsText = numTorrentsCurrentView + " of " + numTorrentsTotal + " torrents showing";
+	if (numTorrentsSelected > 0) {
+		numTorrentsText += " (" + numTorrentsSelected + " selected)";
+	}
+	
+	footerDiv.append($("<p>").text(numTorrentsText));
+	footerDiv.append($("<p>").text("rTorrent v" + gClientInfo["client_version"] + 
+									" - libTorrent v" + gClientInfo["library_version"] + 
+									" - DarTui v" + gClientInfo["dartui_version"]));
 	$(".footer").html(footerDiv.html());
 }
 
@@ -630,6 +644,9 @@ function buildTorrentRows(rpcIdArray) {
 	$(".torrent_row").filter(":odd").addClass("torrent_row_odd");
 	$(".torrent_row").last().addClass("torrent_row_bottom");
 	$(".dropdown_container").last().addClass("dropdown_container_bottom");
+	
+	// update footer in case number of torrents has changed
+	buildFooter()
 	
 	/* for some reason, when the torrents are rebuilt,
 	torrent.progressBarElem becomes unset and goes back to it's default.
@@ -945,6 +962,8 @@ function addTriggers() {
 				$('.row_checkbox').prop("checked", true);
 				$('.torrent_row').addClass("torrent_row_selected");
 				toggleBatchActions("show");
+				// update selected torrent data
+				buildFooter();
 			}
 		}
 		/* batch action shortcuts */
@@ -965,7 +984,9 @@ function addTriggers() {
 function deselectAllTorrentRowCheckBoxes() {
 	$('.row_checkbox').prop("checked", false);
 	$('.torrent_row').removeClass("torrent_row_selected");
-	toggleBatchActions("hide");	
+	toggleBatchActions("hide");
+	// update selected torrent data
+	buildFooter();
 }
 
 function batchPerformTorrentAction(mode) {
