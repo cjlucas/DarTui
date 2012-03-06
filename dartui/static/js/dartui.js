@@ -262,7 +262,7 @@ function processTorrentData(data) {
 	gRpcIdArrayCurrentView = newRpcIdArrayFilteredAndSorted;
 }
 
-function buildHeader(clientInfo, hideIcons) {
+function buildHeader(hideIcons) {
 	var headerDiv = $("<div>");
 	
 	var logo = $("<div>").addClass("logo").append($("<img>").attr("src", "/static/imgs/logo.png"));
@@ -288,7 +288,7 @@ function buildHeader(clientInfo, hideIcons) {
 	
 	
 	$(".header").html(headerDiv.html());
-	updateHeader(clientInfo);
+	updateHeader();
 	
 	$(".header_icon").hover(
 		function() {
@@ -314,11 +314,11 @@ function buildHeader(clientInfo, hideIcons) {
 	});
 }
 
-function updateHeader(clientInfo) {
-	if (clientInfo == undefined || clientInfo["disk_free_str"] == undefined) { return }
+function updateHeader() {
+	if (gClientInfo == undefined || gClientInfo["disk_free_str"] == undefined) { return }
 	
-	var html = "<div><b>Free: </b>" + clientInfo["disk_free_str"] + " <b>Total: </b>" + clientInfo["disk_total_str"] + " (" + clientInfo["disk_free_percentage"] + "% free)" + "</div>";
-	html += "<div><b>Down: </b>" + clientInfo["down_rate"] + " <b>Up: </b> " + clientInfo["up_rate"] + "</div>";
+	var html = "<div><b>Free: </b>" + gClientInfo["disk_free_str"] + " <b>Total: </b>" + gClientInfo["disk_total_str"] + " (" + gClientInfo["disk_free_percentage"] + "% free)" + "</div>";
+	html += "<div><b>Down: </b>" + gClientInfo["down_rate"] + " <b>Up: </b> " + gClientInfo["up_rate"] + "</div>";
 	
 	$(".client_info").html(html);
 }

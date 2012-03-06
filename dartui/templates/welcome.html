@@ -16,7 +16,7 @@
 		</div>
 	</body>
 	<script>
-	buildHeader({}, true)
+	buildHeader(true)
 	$$(".welcome").html(buildSettings(simpleAjaxCall("GET", "/get_settings"), false))
 	addSettingsTriggers();
 	</script>
