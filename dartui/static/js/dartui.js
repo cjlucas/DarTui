@@ -924,19 +924,19 @@ function toggleBatchActions(display) {
 
 function addTriggers() {
 	$('.batch_play_icon').click(function () {
-		batchPerformTorrentAction("start");
+		batchPerformTorrentAction($(this), "start");
 	});
 	
 	$('.batch_pause_icon').click(function () {
-		batchPerformTorrentAction("stop");
+		batchPerformTorrentAction($(this), "stop");
 	});
 	
 	$('.batch_delete_icon').click(function () {
-		batchPerformTorrentAction("delete");
+		batchPerformTorrentAction($(this), "delete");
 	});
 	
 	$('.batch_rehash_icon').click(function () {
-		batchPerformTorrentAction("rehash");
+		batchPerformTorrentAction($(this), "rehash");
 	});
 	
 	$(".batch_actions img").hover(
@@ -995,12 +995,15 @@ function deselectAllTorrentRowCheckBoxes() {
 	buildFooter();
 }
 
-function batchPerformTorrentAction(mode) {
+function batchPerformTorrentAction(elem, mode) {
 	var formData = $("form").serialize();
+	var ret_data;
+	var elemOrigSrc = elem.attr("src");
+	// set loading icon
+	elem.attr(getLoadingIconAttributes("ffffff"));
+	
 	log("formData");
 	log(formData);
-	var ret_data;
-
 	
 	if (mode == "start" || mode == "stop" || mode == "rehash") {
 		data = simpleAjaxCall("GET", "/torrent", {mode : mode, rpc_ids : formData});
@@ -1019,6 +1022,8 @@ function batchPerformTorrentAction(mode) {
 			//gTorrentArray[rpcId].hide();
 		}
 	}
+	// set original icon
+	elem.attr("src", elemOrigSrc);
 	deselectAllTorrentRowCheckBoxes();
 }
 
@@ -1045,7 +1050,6 @@ function toggleStartStop(elem) {
 	gTorrentArray[rpcId].update(newTorrentData);
 	log("newTorrentData = " + newTorrentData);
 	log(newTorrentData);
-	//torrentRow.html(buildTorrentRow(newTorrentData).children().first().html());
 }
 
 function deleteTorrent(elem) {
@@ -1063,7 +1067,10 @@ function performTorrentAction(elem, mode, rpc_id) {
 	var mode;
 	var ret_value;
 	var args;
-	var url = "/torrent"
+	var url = "/torrent";
+	var origElemSrc = elem.attr("src");
+	// set loading icon
+	elem.attr(getLoadingIconAttributes("2d2d2d"));
 
 	log(elem);
 	log(rpc_id);
@@ -1073,7 +1080,19 @@ function performTorrentAction(elem, mode, rpc_id) {
 	ret_value = simpleAjaxCall("GET", url, args);
 	log("ret_value = " + ret_value);
 	
+	// set original icon
+	elem.attr("src", origElemSrc);
+	
 	return(ret_value);
+}
+
+function getLoadingIconAttributes(color) {
+	var iconAttr = {
+		src : "/static/imgs/loading_" + color + ".gif",
+		height : "20px",
+		width : "20px",
+	};
+	return(iconAttr)
 }
 
 function simpleAjaxCall(type, url, data) {
@@ -1087,7 +1106,7 @@ function simpleAjaxCall(type, url, data) {
 	});
 	
 	request.done(function(ajax_data) {
-		log("ajax_data = " + ajax_data);
+		//log("ajax_data = " + ajax_data);
 		gData = ajax_data;
 	});
 	
@@ -1097,14 +1116,7 @@ function simpleAjaxCall(type, url, data) {
 function refreshRows() {
 	if (batchActionsHidden && !isScrolling) {
 		log("refreshing rows...");
-		var request = $.ajax({
-			url : "get_torrents",
-			type : "GET",
-			dataType: "json", 
-		});
-	
-		request.done(function(data) {
-			processTorrentData(data);
-		});	
+		var data = simpleAjaxCall("GET", "/get_torrents", "");
+		processTorrentData(data);
 	}
 }
