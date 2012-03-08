@@ -1077,11 +1077,23 @@ function performTorrentAction(elem, mode, rpc_id) {
 	
 	args = "mode=" + mode + "&rpc_ids=" + rpc_id;
 	log("args = " + args);
-	ret_value = simpleAjaxCall("GET", url, args);
+	//ret_value = simpleAjaxCall("GET", url, args);
+	var reest = $.ajax({
+		type : "GET",
+		dataType : "json",
+		url : url,
+		data : args,
+		context : elem,
+		async : false,
+		success : function (data) {
+			$(this).attr("src", origElemSrc);
+			ret_value = data;
+		},
+		error : function () {
+			$(this).attr("src", origElemSrc);
+		}
+	});
 	log("ret_value = " + ret_value);
-	
-	// set original icon
-	elem.attr("src", origElemSrc);
 	
 	return(ret_value);
 }
@@ -1096,7 +1108,7 @@ function getLoadingIconAttributes(color) {
 }
 
 function simpleAjaxCall(type, url, data) {
-	var gData;
+	var _data;
 	var request = $.ajax({
 		url : url,
 		type : type,
@@ -1105,12 +1117,19 @@ function simpleAjaxCall(type, url, data) {
 		async : false,
 	});
 	
-	request.done(function(ajax_data) {
-		//log("ajax_data = " + ajax_data);
-		gData = ajax_data;
+	request.done(function(data) {
+		_data = data;
 	});
-	
-	return(gData);
+	return(_data);
+}
+
+function testLoadIcon() {
+	var elem = $(".play_pause_icon").eq(0);
+	var elemOrigSrc = elem.attr("src");
+	log(elem);
+	elem.attr(getLoadingIconAttributes("2d2d2d"));
+	simpleAjaxCall("GET", "http://google.com", "");
+	elem.attr("src", elemOrigSrc);
 }
 
 function refreshRows() {
