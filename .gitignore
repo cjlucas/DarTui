@@ -6,8 +6,6 @@
 *.swp
 /__pycache__
 /logs
-/tests
-/dartui/tests
 /build
 /dist
 /*egg-info
