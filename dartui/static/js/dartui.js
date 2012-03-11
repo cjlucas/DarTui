@@ -928,19 +928,19 @@ function toggleBatchActions(display) {
 
 function addTriggers() {
 	$('.batch_play_icon').click(function () {
-		batchPerformTorrentAction($(this), "start");
+		batchPerformTorrentAction("start");
 	});
 	
 	$('.batch_pause_icon').click(function () {
-		batchPerformTorrentAction($(this), "stop");
+		batchPerformTorrentAction("stop");
 	});
 	
 	$('.batch_delete_icon').click(function () {
-		batchPerformTorrentAction($(this), "delete");
+		batchPerformTorrentAction("delete");
 	});
 	
 	$('.batch_rehash_icon').click(function () {
-		batchPerformTorrentAction($(this), "rehash");
+		batchPerformTorrentAction("rehash");
 	});
 	
 	$(".batch_actions img").hover(
@@ -999,10 +999,9 @@ function deselectAllTorrentRowCheckBoxes() {
 	buildFooter();
 }
 
-function batchPerformTorrentAction(elem, mode) {
+function batchPerformTorrentAction(mode) {
 	var formData = $("form").serialize();
 	var ret_data;
-	var elemOrigSrc = elem.attr("src");
 	
 	log("formData");
 	log(formData);
@@ -1024,8 +1023,6 @@ function batchPerformTorrentAction(elem, mode) {
 			//gTorrentArray[rpcId].hide();
 		}
 	}
-	// set original icon
-	elem.attr("src", elemOrigSrc);
 	deselectAllTorrentRowCheckBoxes();
 }
 
