@@ -665,10 +665,10 @@ function buildTorrentRows(rpcIdArray) {
 		
 		torrent.startStopIconElem.click(function() {
 			toggleStartStop($(this));
-		})
+		});
 		torrent.deleteIconElem.click(function() {
 			deleteTorrent($(this));
-		})
+		});
 		torrent.checkBoxElem.click(function(e) {
 			handleTorrentCheckBoxSelection($(this), e);
 		});
@@ -999,8 +999,6 @@ function batchPerformTorrentAction(elem, mode) {
 	var formData = $("form").serialize();
 	var ret_data;
 	var elemOrigSrc = elem.attr("src");
-	// set loading icon
-	elem.attr(getLoadingIconAttributes("ffffff"));
 	
 	log("formData");
 	log(formData);
@@ -1041,7 +1039,6 @@ function toggleStartStop(elem) {
 		mode = "start";
 		newImg = pauseIcon;
 	}
-	
 	performTorrentAction(elem, mode, rpcId);
 	
 	// don't need to check ret_code, just refresh row (will probably need to eventually)
@@ -1069,8 +1066,6 @@ function performTorrentAction(elem, mode, rpc_id) {
 	var args;
 	var url = "/torrent";
 	var origElemSrc = elem.attr("src");
-	// set loading icon
-	elem.attr(getLoadingIconAttributes("2d2d2d"));
 
 	log(elem);
 	log(rpc_id);
@@ -1098,15 +1093,6 @@ function performTorrentAction(elem, mode, rpc_id) {
 	return(ret_value);
 }
 
-function getLoadingIconAttributes(color) {
-	var iconAttr = {
-		src : "/static/imgs/loading_" + color + ".gif",
-		height : "20px",
-		width : "20px",
-	};
-	return(iconAttr)
-}
-
 function simpleAjaxCall(type, url, data) {
 	var _data;
 	var request = $.ajax({
@@ -1121,15 +1107,6 @@ function simpleAjaxCall(type, url, data) {
 		_data = data;
 	});
 	return(_data);
-}
-
-function testLoadIcon() {
-	var elem = $(".play_pause_icon").eq(0);
-	var elemOrigSrc = elem.attr("src");
-	log(elem);
-	elem.attr(getLoadingIconAttributes("2d2d2d"));
-	simpleAjaxCall("GET", "http://google.com", "");
-	elem.attr("src", elemOrigSrc);
 }
 
 function refreshRows() {
