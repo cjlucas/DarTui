@@ -25,7 +25,18 @@ def main():
         default=8080,
         help="HTTP server port (Default: 8080)",
     )
+    parser.add_option(
+        "-v", "--version",
+        dest="print_version",
+        action="store_true",
+        default=False,
+        help="Print version and exit"
+    )
     opts, args = parser.parse_args()
+    
+    if opts.print_version:
+        print("DarTui v{0}".format(dartui.__version__))
+        sys.exit(0)
     
     dartui.run(opts.conf_dir, opts.addr, opts.port)
 
