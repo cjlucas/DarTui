@@ -1,2 +1,3 @@
 graft dartui/static/
 graft dartui/templates/
+include README.md CHANGELOG.txt
