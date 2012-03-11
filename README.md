@@ -36,3 +36,4 @@ TODO
 - Basic HTTP authentication support
 - Torrent details view (file/peers/trackers)
 - Mobile interface
+- Filter torrents via search
