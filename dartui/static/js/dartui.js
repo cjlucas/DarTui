@@ -1065,7 +1065,6 @@ function performTorrentAction(elem, mode, rpc_id) {
 	var ret_value;
 	var args;
 	var url = "/torrent";
-	var origElemSrc = elem.attr("src");
 
 	log(elem);
 	log(rpc_id);
@@ -1078,15 +1077,10 @@ function performTorrentAction(elem, mode, rpc_id) {
 		dataType : "json",
 		url : url,
 		data : args,
-		context : elem,
 		async : false,
 		success : function (data) {
-			$(this).attr("src", origElemSrc);
 			ret_value = data;
 		},
-		error : function () {
-			$(this).attr("src", origElemSrc);
-		}
 	});
 	log("ret_value = " + ret_value);
 	
