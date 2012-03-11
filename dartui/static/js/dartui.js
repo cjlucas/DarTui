@@ -738,6 +738,10 @@ function sortTorrents(rpcIdArray) {
 	// sort based on gSortKey
 	rpcIdArray.sort(sortTorrentByKey);
 	
+	// workaround for age sorting
+	if (gSortKey == "ctime") {
+		rpcIdArray.reverse();
+	}
 	if (sortReverse) {
 		rpcIdArray.reverse();
 	}
