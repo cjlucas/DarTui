@@ -407,7 +407,7 @@ function getDefaultTorrentRow() {
 	
 	actionContainerDiv = $("<div>").addClass("action_container");
 	actionContainerDiv.append($("<div>").addClass("play_pause_icon"));
-	actionContainerDiv.append($("<div>").addClass("delete_icon").append(deleteIcon.clone()));
+	actionContainerDiv.append($("<div>").addClass("delete_icon").append(changeIconColor(deleteIcon.clone(), iconColorIdle)));
 	torrentRowDiv.append(actionContainerDiv);
 	
 	// add torrent name/eta
