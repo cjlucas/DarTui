@@ -71,7 +71,7 @@ body {
 	bottom: 0;
 	right: 0;
 }
-.header_icon {
+.icons svg {
 	cursor: pointer;
 	padding-left: 3px;
 	padding-right: 3px;
@@ -319,7 +319,7 @@ body {
 	width: 50px;
 	z-index: 1;
 	background-color: #2d2d2d;
-	padding-top: 10px;
+	/*padding-top: 10px;*/
 	padding-bottom: 10px;
 	padding-right: 5px;
 	-moz-border-radius-topright: 20px;
@@ -330,10 +330,12 @@ body {
 	border-bottom-right-radius: 20px;
 	
 }
-.batch_actions img {
+.batch_actions svg {
 	padding-top: 5px;
 	padding-bottom: 5px;
 	cursor: pointer;
+	display: block;
+	margin: auto;
 }
 #conn_test_results {
 	font-size: .8em;

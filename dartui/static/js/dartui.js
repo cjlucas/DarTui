@@ -1,7 +1,7 @@
 var batchActionsHidden = true;
 var isScrolling = false;
-var pauseIcon = "/static/imgs/pause_icon.png";
-var startIcon = "/static/imgs/play_icon.png";
+//var pauseIcon = "/static/imgs/pause_2d2d2d.svg";
+//var startIcon = "/static/imgs/start_2d2d2d.svg";
 var gSortKey = "name";
 var sortReverse = false;
 var lastBoxChecked = null;
@@ -12,6 +12,18 @@ var gRpcIdArrayCurrentView = [];
 var gFiltersArray = {};
 var gClientInfo = {};
 var gErrorCode = 0;
+
+var iconColorIdle = "#2d2d2d";
+var iconColorHover = "#f99400";
+var iconColorActive = "#34b915";
+var iconColorBatch = "#ffffff";
+
+var startIcon = $('<svg version="1.2" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="20px" height="20px" viewBox="0 0 20 20" overflow="inherit" xml:space="preserve"><g id="play_1_"><path id="toggle_color" d="M18.606,10.361L1.671,19.898c-0.239,0.199-0.463,0.096-0.463-0.229V0.331c0-0.326,0.222-0.428,0.461-0.229l16.95,9.537C18.858,9.837,18.846,10.163,18.606,10.361z"/></g></svg>');
+var pauseIcon = $('<svg version="1.2" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="20px" height="20px" viewBox="0 0 20 20" overflow="inherit" xml:space="preserve"><g id="pause_1_"><path id="toggle_color" d="M8.438,19.375C8.438,19.719,8.156,20,7.812,20h-3.75c-0.344,0-0.625-0.281-0.625-0.625V0.625C3.438,0.281,3.719,0,4.062,0h3.75c0.344,0,0.625,0.281,0.625,0.625V19.375z M16.562,0.625C16.562,0.281,16.281,0,15.938,0h-3.75c-0.344,0-0.625,0.281-0.625,0.625v18.75c0,0.344,0.281,0.625,0.625,0.625h3.75c0.344,0,0.625-0.281,0.625-0.625V0.625z"/></g></svg>');
+var deleteIcon = $('<svg version="1.2" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="20px" height="20px" viewBox="0 0 20 20" overflow="inherit" xml:space="preserve"><g id="remove_x5F_2"><path id="toggle_color" d="M13.544,10l6.272-6.272c0.245-0.247,0.245-0.65,0-0.895L17.17,0.187c-0.245-0.245-0.647-0.245-0.894,0l-6.274,6.274L3.725,0.183c-0.246-0.245-0.648-0.245-0.894,0L0.185,2.831c-0.246,0.243-0.246,0.646,0,0.895l6.277,6.276l-6.274,6.274c-0.244,0.244-0.244,0.647,0,0.894l2.646,2.646c0.246,0.244,0.651,0.244,0.895,0l6.273-6.273l6.271,6.271c0.245,0.244,0.649,0.244,0.895,0l2.647-2.648c0.244-0.243,0.244-0.647,0-0.894L13.544,10z"/></g></svg>');
+var rehashIcon = $('<svg version="1.2" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="20px" height="20px" viewBox="0 0 20 20" overflow="inherit" xml:space="preserve"><g id="refresh"><path id="toggle_color" d="M17.976,16.072c-3.236,4.262-9.229,5.224-13.642,2.189l-0.049-0.033l-1.274,1.677c-0.139,0.183-0.304,0.151-0.367-0.068l-1.487-5.218c-0.062-0.221,0.073-0.4,0.303-0.398l5.425,0.032c0.229,0.002,0.305,0.151,0.165,0.335l-1.246,1.642c3.305,2.235,7.764,1.508,10.178-1.671c1.491-1.963,1.856-4.426,1.221-6.63h2.574C20.362,10.681,19.808,13.66,17.976,16.072z M2.796,12.102C2.16,9.897,2.526,7.434,4.017,5.471C6.43,2.292,10.89,1.565,14.195,3.8l-1.247,1.642c-0.139,0.183-0.064,0.333,0.165,0.334l5.425,0.033c0.229,0.001,0.366-0.178,0.304-0.398l-1.487-5.217c-0.063-0.221-0.229-0.252-0.366-0.069l-1.275,1.677l-0.049-0.033C11.252-1.266,5.259-0.305,2.023,3.957C0.19,6.369-0.363,9.349,0.224,12.102H2.796L2.796,12.102z"/></g></svg>');
+var settingsIcon = $('<svg version="1.2" baseProfile="tiny" id="settings" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="35px" height="35px" viewBox="0 0 35 35" overflow="inherit" xml:space="preserve"><path id="toggle_color" d="M35,17.502C35,27.167,27.164,35,17.5,35S0,27.167,0,17.502C0,7.833,7.836,0,17.5,0S35,7.833,35,17.502z"/><g id="cogwheels"><path id="cogwheels_1_" fill="#FFFFFF" d="M22.117,15.097c0.019-0.22,0.03-0.438,0.034-0.659c0-0.224-0.012-0.445-0.03-0.663l-1.384-0.351c-0.071-0.458-0.19-0.902-0.35-1.328l1.031-0.991c-0.188-0.401-0.408-0.785-0.657-1.145l-1.379,0.388c-0.286-0.356-0.609-0.682-0.964-0.971l0.397-1.376c-0.36-0.25-0.739-0.476-1.141-0.665l-0.999,1.026c-0.421-0.165-0.864-0.286-1.322-0.36l-0.344-1.388c-0.216-0.02-0.437-0.033-0.659-0.031c-0.222-0.002-0.443,0.008-0.662,0.027L13.34,7.996c-0.458,0.07-0.903,0.19-1.327,0.352l-0.992-1.033c-0.401,0.186-0.783,0.406-1.144,0.656l0.39,1.378c-0.359,0.286-0.686,0.61-0.972,0.966L7.919,9.916c-0.251,0.36-0.476,0.741-0.664,1.14l1.025,1c-0.166,0.42-0.286,0.863-0.361,1.323L6.531,13.72c-0.018,0.22-0.03,0.438-0.031,0.661c-0.001,0.223,0.009,0.441,0.026,0.659l1.385,0.353c0.072,0.461,0.191,0.903,0.353,1.325L7.229,17.71c0.188,0.403,0.408,0.784,0.657,1.144l1.377-0.387c0.287,0.357,0.61,0.684,0.967,0.973l-0.399,1.375c0.36,0.252,0.74,0.477,1.139,0.666l1.001-1.025c0.42,0.16,0.863,0.285,1.32,0.357l0.341,1.387c0.22,0.021,0.44,0.035,0.663,0.037c0.224,0,0.442-0.014,0.66-0.031l0.353-1.383c0.459-0.072,0.904-0.189,1.325-0.35l0.991,1.033c0.402-0.188,0.787-0.406,1.146-0.66l-0.388-1.377c0.356-0.285,0.684-0.611,0.973-0.967l1.375,0.398c0.25-0.357,0.477-0.738,0.667-1.138l-1.027-1c0.164-0.421,0.287-0.863,0.36-1.321L22.117,15.097z M14.312,17.571c-1.746-0.009-3.156-1.429-3.149-3.175c0.006-1.746,1.427-3.156,3.173-3.149c1.747,0.006,3.158,1.427,3.151,3.172C17.478,16.166,16.058,17.577,14.312,17.571zM28.473,23.068l-0.999-0.379c-0.094-0.404-0.243-0.783-0.443-1.131l0.479-0.957c-0.243-0.324-0.523-0.613-0.839-0.871l-0.977,0.439c-0.339-0.211-0.71-0.377-1.108-0.482l-0.338-1.016c-0.196-0.027-0.396-0.045-0.602-0.049c-0.203-0.006-0.407,0.008-0.605,0.027l-0.375,1c-0.403,0.092-0.781,0.24-1.127,0.439l-0.96-0.479c-0.321,0.246-0.614,0.523-0.868,0.836l0.438,0.979c-0.217,0.338-0.379,0.711-0.485,1.111l-1.017,0.34c-0.027,0.193-0.047,0.398-0.05,0.602c-0.004,0.207,0.005,0.404,0.025,0.607l1.002,0.375c0.091,0.404,0.24,0.783,0.441,1.127l-0.476,0.959c0.241,0.324,0.525,0.617,0.835,0.871l0.979-0.439c0.337,0.213,0.708,0.377,1.107,0.484l0.336,1.014c0.198,0.029,0.4,0.045,0.604,0.051c0.206,0.004,0.407-0.006,0.604-0.027l0.379-1c0.4-0.092,0.777-0.24,1.127-0.441l0.956,0.479c0.325-0.242,0.619-0.525,0.873-0.838l-0.441-0.977c0.213-0.336,0.379-0.709,0.486-1.111l1.014-0.332c0.03-0.201,0.047-0.402,0.051-0.607C28.503,23.469,28.495,23.266,28.473,23.068z M23.511,25.396c-1.005-0.021-1.805-0.852-1.783-1.857c0.019-1.006,0.85-1.805,1.856-1.785c1.005,0.02,1.803,0.852,1.784,1.857C25.35,24.615,24.518,25.416,23.511,25.396z"/></g></svg>');
+var filtersIcon = $('<svg version="1.2" baseProfile="tiny" id="filters" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="35px" height="35px" viewBox="0 0 35 35" overflow="inherit" xml:space="preserve"><path id="toggle_color" d="M35,17.5C35,27.168,27.164,35,17.5,35C7.834,35,0,27.168,0,17.5C0,7.834,7.834,0,17.5,0C27.164,0,35,7.834,35,17.5z"/><path fill="#FFFFFF" d="M15.177,8.577c-0.15-0.15-0.447-0.273-0.66-0.273h-6.88c-0.213,0-0.387,0.174-0.387,0.386v6.882c0,0.212,0.123,0.51,0.273,0.659l10.353,10.355c0.151,0.149,0.397,0.149,0.547,0l7.107-7.11c0.151-0.149,0.151-0.396,0-0.544L15.177,8.577z M12.136,13.189c-0.604,0.604-1.583,0.604-2.188,0c-0.604-0.604-0.604-1.583,0-2.187s1.583-0.604,2.188,0C12.739,11.606,12.739,12.585,12.136,13.189z M29.896,19.751l-6.561,6.561c-0.151,0.15-0.513,0.388-0.622,0.348c-0.108-0.041-0.32-0.197-0.472-0.348l-0.533-0.532c-0.15-0.151-0.15-0.397,0-0.548l5.481-5.48c0.15-0.151,0.391-0.515,0.348-0.622c-0.041-0.111-0.198-0.321-0.348-0.473L17.383,8.85c-0.15-0.15-0.362-0.347-0.406-0.372c-0.042-0.025-0.106-0.074-0.142-0.11s0.109-0.065,0.322-0.065h1.612c0.213,0,0.7,0.061,0.824,0.137c0.122,0.075,0.346,0.26,0.496,0.41l9.807,9.806c0.15,0.151,0.308,0.365,0.349,0.473C30.286,19.238,30.047,19.6,29.896,19.751z"/></svg>');
 
 /* keep track of if the window is scrolling or not.
   scrolling while refreshRows is executing causes jerkiness */
@@ -28,6 +40,11 @@ function log(msg) {
 	}
 }
 
+function changeIconColor(iconElem, color) {
+	iconElem.find("path#toggle_color").attr("fill", color);
+	return(iconElem);
+}
+
 function Torrent(id) {
 	this.rpcId = id;
 	this.torrentRowElem		= getDefaultTorrentRow();
@@ -42,6 +59,8 @@ function Torrent(id) {
 	this.upSpeedElem		= this.torrentRowElem.find(".torrent_up_speed");
 	this.ratioElem			= this.torrentRowElem.find(".torrent_ratio");
 	this.sizeElem			= this.torrentRowElem.find(".torrent_size");
+	this.startIcon			= changeIconColor(startIcon.clone(), iconColorIdle).attr("id", "start");
+	this.pauseIcon			= changeIconColor(pauseIcon.clone(), iconColorIdle).attr("id", "stop");
 	
 	this.torrentRowElem.attr("id", this.rpcId);
 	this.checkBoxElem.attr("value", this.rpcId);
@@ -53,9 +72,9 @@ function Torrent(id) {
 		//img = this.startStopIconElem.html($("<img>").addClass("play_pause_icon"));
 		if (this.active == false) {
 			// if paused
-			this.startStopIconElem.attr("src", startIcon).attr("title", "Start");
+			this.startStopIconElem.html(this.startIcon);
 		} else {
-			this.startStopIconElem.attr("src", pauseIcon).attr("title", "Pause");
+			this.startStopIconElem.html(this.pauseIcon);
 		}
 	}
 	this.setProgressBar = function() {
@@ -265,7 +284,7 @@ function processTorrentData(data) {
 function buildHeader(hideIcons) {
 	var headerDiv = $("<div>");
 	
-	var logo = $("<div>").addClass("logo").append($("<img>").attr("src", "/static/imgs/logo.png"));
+	var logo = $("<div>").addClass("logo").append($("<img>").attr("src", "/static/imgs/logo.svg"));
 	headerDiv.append(logo);
 	
 	headerDiv.append($("<div>").addClass("client_info"));
@@ -276,39 +295,31 @@ function buildHeader(hideIcons) {
 	}
 	
 	var icons = $("<div>").addClass("icons");
-	icons.append($("<img>")
-				.addClass("header_icon filters_icon")
-				.attr("src", "/static/imgs/filters_icon_idle.png")
-				.attr("title", "Filters"));
-	icons.append($("<img>")
-				.addClass("header_icon settings_icon")
-				.attr("src", "/static/imgs/settings_icon_idle.png")
-				.attr("title", "Settings"));
+	icons.append(changeIconColor(filtersIcon, iconColorIdle));
+	icons.append(changeIconColor(settingsIcon, iconColorIdle));
 	headerDiv.append(icons);
 	
 	
 	$(".header").html(headerDiv.html());
 	updateHeader();
 	
-	$(".header_icon").hover(
+	$(".icons svg").hover(
 		function() {
-			var imgSrc = $(this).attr("src");
-			$(this).attr("src", imgSrc.replace("idle", "hover"));
+			changeIconColor($(this), iconColorHover);
 		},
 		function() {
-			var imgSrc = $(this).attr("src");
-			if ($(this).hasClass("filters_icon") && $(".filter_menu").css("right") == "0px") {
+			if ($(this).attr("id") == "filters" && $(".filter_menu").css("right") == "0px") {
 				// if filter menu is visible, keep hover icon
 				return
 			}
-			$(this).attr("src", imgSrc.replace("hover", "idle"));
+			changeIconColor($(this), iconColorIdle);
 		}
 	);
 	
-	$(".filters_icon").click(function () {
+	$(".icons svg#filters").click(function () {
 		toggleFilterMenu();
 	});
-	$(".settings_icon").click(function () {
+	$(".icons svg#settings").click(function () {
 		showDropDown(buildSettings(gSettingsArray, true));
 		addSettingsTriggers();
 	});
@@ -325,21 +336,21 @@ function updateHeader() {
 
 function toggleFilterMenu() {
 	var filterMenuElem = $(".filter_menu");
-	var filterIconElem = $(".filters_icon");
+	var filterIconElem = $(".icons svg#filters");
 	if (filterMenuElem.css("right") == "0px") {
 		// if showing
 		// left+right padding is 20px
 		var i = filterMenuElem.width() + 20;
 		var elemPositionHidden = "-" + i + "px";
 		if ($(".filter_checkbox").filter(":checked").length == 0){
-			filterIconElem.attr("src", "/static/imgs/filters_icon_idle.png");
+			changeIconColor(filterIconElem, iconColorIdle);
 		}
 		filterMenuElem.animate({right : elemPositionHidden}, {duration : 100});
 		
 	} else {
 		// if hidden
 		if ($(".filter_checkbox").filter(":checked").length == 0){
-			filterIconElem.attr("src", "/static/imgs/filters_icon_hover.png");
+			changeIconColor(filterIconElem, iconColorHover);
 		}
 		filterMenuElem.animate({right : "0"}, {duration : 100});
 	}
@@ -394,13 +405,9 @@ function getDefaultTorrentRow() {
 		//.attr("value", t.rpc_id))
 	);
 	
-	playPauseDiv = $("<img>").addClass("play_pause_icon");
 	actionContainerDiv = $("<div>").addClass("action_container");
-	actionContainerDiv.append($("<div>").append(playPauseDiv));
-	actionContainerDiv.append($("<div>").append($("<img>")
-										.addClass("delete_icon")
-										.attr("src", "/static/imgs/delete_icon.png")
-										.attr("title", "Delete")));
+	actionContainerDiv.append($("<div>").addClass("play_pause_icon"));
+	actionContainerDiv.append($("<div>").addClass("delete_icon").append(deleteIcon.clone()));
 	torrentRowDiv.append(actionContainerDiv);
 	
 	// add torrent name/eta
@@ -534,6 +541,21 @@ function addSettingsTriggers() {
 	});
 }
 
+function buildBatchActionsMenu() {
+	var batchIcons = {
+		"start" : startIcon.clone(),
+		"stop" : pauseIcon.clone(),
+		"delete" : deleteIcon.clone(),
+		"rehash" : rehashIcon.clone(),
+	}
+	
+	$.each(batchIcons, function(id, icon) {
+		changeIconColor(icon, iconColorBatch)
+		icon.attr("id", id);
+		$(".batch_actions").append(icon);
+	});
+}
+
 function buildFilterMenuHeader(title, filterType) {
 	var filterHeaderDiv = $("<div>").addClass("filter_menu_header");
 	filterHeaderDiv.append($("<span>").addClass("filter_menu_header_name").text(title));
@@ -598,7 +620,7 @@ function buildFilterMenu() {
 		
 		// check if active filter icon should be removed
 		if ($(".filter_checkbox").filter(":checked").length == 0) {
-			$(".filters_icon").attr("src", "/static/imgs/filters_icon_hover.png");
+			changeIconColor($(".icons svg#filter"), iconColorHover);
 		}
 		
 		gRpcIdArrayCurrentView = sortTorrents(filterTorrents(gRpcIdArray));
@@ -608,12 +630,12 @@ function buildFilterMenu() {
 	$('.filter_checkbox').click(function () {
 		if ($(this).is(":checked")) {
 			$(this).next().addClass("filter_label_selected");
-			$(".filters_icon").attr("src", "/static/imgs/filters_icon_active.png");
+			changeIconColor($(".icons svg#filters"), iconColorActive);
 		} else {
 			$(this).next().removeClass("filter_label_selected");
 			// check if active filter icon should be removed
 			if ($(".filter_checkbox").filter(":checked").length == 0) {
-				$(".filters_icon").attr("src", "/static/imgs/filters_icon_hover.png");
+				changeIconColor($(".icons svg#filters"), iconColorHover);
 			}
 		}
 		gRpcIdArrayCurrentView = sortTorrents(filterTorrents(gRpcIdArray));
@@ -927,7 +949,7 @@ function toggleBatchActions(display) {
 }
 
 function addTriggers() {
-	$('.batch_play_icon').click(function () {
+	/*$('.batch_play_icon').click(function () {
 		batchPerformTorrentAction("start");
 	});
 	
@@ -941,16 +963,17 @@ function addTriggers() {
 	
 	$('.batch_rehash_icon').click(function () {
 		batchPerformTorrentAction("rehash");
-	});
+	});*/
+	$('.batch_actions svg').click(function () {
+		batchPerformTorrentAction($(this).attr("id"));
+	})
 	
-	$(".batch_actions img").hover(
+	$(".batch_actions svg").hover(
 		function () {
-			var imgSrc = $(this).attr("src");
-			$(this).attr("src", imgSrc.replace("white", "hover"));
+			changeIconColor($(this), iconColorHover);
 		},
 		function () {
-			var imgSrc = $(this).attr("src");
-			$(this).attr("src", imgSrc.replace("hover", "white"));
+			changeIconColor($(this), iconColorBatch);
 		}
 	);
 	
@@ -1028,18 +1051,10 @@ function batchPerformTorrentAction(mode) {
 
 function toggleStartStop(elem) {
 	var newImg;
-	var imgSrc = elem.attr("src");
-	var rpcId = elem.parent().parent().parent().attr("id");
-	
-	if (imgSrc == pauseIcon) {
-		log("icon status: paused");
-		mode = "stop";
-		newImg = startIcon;
-	} else if (imgSrc == startIcon) {
-		log("icon status: started");
-		mode = "start";
-		newImg = pauseIcon;
-	}
+	// elem is this div.play_pause_icon
+	var rpcId = elem.parent().parent().attr("id");
+	// the mode is the id of the svg, which is the first child of elem
+	var mode = elem.children().eq(0).attr("id");
 	performTorrentAction(elem, mode, rpcId);
 	
 	// don't need to check ret_code, just refresh row (will probably need to eventually)
@@ -1051,7 +1066,8 @@ function toggleStartStop(elem) {
 }
 
 function deleteTorrent(elem) {
-	var rpcId = elem.parent().parent().parent().attr("id");
+	// elem is this div.play_pause_icon
+	var rpcId = elem.parent().parent().attr("id");
 	var mode = "delete";
 	var data;
 	

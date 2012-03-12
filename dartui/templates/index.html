@@ -16,12 +16,7 @@ $def with (torrents_json, settings_json)
 		<div class="wrapper">
 			<div class="dropdown"></div>
 			<div class="header"></div>
-			<div class="batch_actions">
-				<div><img class="batch_play_icon" title="Start Torrents" src="/static/imgs/play_icon_white.png" /></div>
-				<div><img class="batch_pause_icon" title="Pause Torrents" src="/static/imgs/pause_icon_white.png" /></div>
-				<div><img class="batch_delete_icon" title="Delete Torrents" src="/static/imgs/delete_icon_white.png" /></div>
-				<div><img class="batch_rehash_icon" title="Rehash Torrents" src="/static/imgs/rehash_icon_white.png" /></div>
-			</div>
+			<div class="batch_actions"></div>
 			<div class="filter_menu"></div>
 			<div class="sort_header"></div>
 			<form>
@@ -34,6 +29,7 @@ $def with (torrents_json, settings_json)
 				gClientInfo = torrentData["client_info"];
 				$$("title").text("DarTui :: " + gSettingsArray["host"] + ":" + gSettingsArray["port"]);
 				addSortHeader();
+				buildBatchActionsMenu();
 				processTorrentData(torrentData);
 				addTriggers();
 				buildHeader();
