@@ -345,9 +345,7 @@ function toggleFilterMenu() {
 	var filterIconElem = $(".icons svg#filters");
 	if (filterMenuElem.css("right") == "0px") {
 		// if showing
-		// left+right padding is 20px
-		var i = filterMenuElem.width() + 20;
-		var elemPositionHidden = "-" + i + "px";
+		var elemPositionHidden = "-" + filterMenuElem.outerWidth() + "px";
 		if ($(".filter_checkbox").filter(":checked").length == 0){
 			changeIconColor(filterIconElem, iconColorIdle);
 		}
@@ -820,11 +818,11 @@ function filterTorrents(rpcIdArray) {
 function handleActiveSortLink() {
 	$(".sort_link").removeClass("sort_link_active");
 	
-	var icon = (sortReverse) ? sortIconDesc : sortIconAsc;
-	
 	var activeLink = $(".sort_link#" + gSortKey);
+	var iconElem = activeLink.next();
+	var icon = (sortReverse) ? sortIconDesc : sortIconAsc;
+
 	activeLink.addClass("sort_link_active");
-	iconElem = activeLink.next();
 	iconElem.html(icon);
 }
 
@@ -850,7 +848,6 @@ function addSortHeader() {
 	$(".sort_header").html(sortHeaderDiv.html());
 	handleActiveSortLink();
 	
-	// add triggers
 	$(".sort_link").click(function () {
 		key = $(this).attr("id");
 		/* dont set update gSortKey till after you call toggleSortOrder
