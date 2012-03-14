@@ -83,16 +83,6 @@ body {
 	font-size: .8em;
 	background: #2d2d2d url(images/ui-bg_highlight-soft_20_2d2d2d_1x100.png) 50% 50% repeat-x;
 }
-
-.ui-icon {
-	vertical-align: middle;
-	display: inline-block;
-	background-image: none;
-	margin-right: 2%;
-}
-.ui-icon-triangle-1-s, .ui-icon-triangle-1-n {
-	background-image: url(images/ui-icons_ffffff_256x240.png);
-}
 .sort_link_set {
 	line-height: 30px; /* needs to be equal to height in .sort_header */
 }
@@ -102,6 +92,14 @@ body {
 .sort_link_active {
 	font-weight: bold;
 	/*text-decoration: underline;*/
+}
+.sort_icon {
+	vertical-align: middle;
+	display: inline-block;
+	background-image: none;
+	margin-right: 2%;
+	padding-left: 2px;
+	width: 10px;
 }
 .rows_wrapper {
 	position: relative;
