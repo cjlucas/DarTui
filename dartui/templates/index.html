@@ -27,7 +27,7 @@ $def with (torrents_json, settings_json)
 				torrentData = $:torrents_json;
 				gSettingsArray = $:settings_json;
 				gClientInfo = torrentData["client_info"];
-				$$("title").text("DarTui :: " + gSettingsArray["host"] + ":" + gSettingsArray["port"]);
+				$$("title").text("DarTui :: " + document.location.host);
 				addSortHeader();
 				buildBatchActionsMenu();
 				processTorrentData(torrentData);
