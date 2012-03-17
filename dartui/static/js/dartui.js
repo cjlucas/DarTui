@@ -385,9 +385,16 @@ function buildStatusFilters() {
 	gFiltersArray["status"]["paused"] = [];
 	gFiltersArray["status"]["downloading"] = [];
 	gFiltersArray["status"]["hashing"] = [];
+	gFiltersArray["status"]["active"] = [];
 	
 	$.each(gTorrentArray, function(rpcId, torrent) {
+		// add seeding/paused/downloading/hashing status
 		gFiltersArray["status"][torrent.status].push(rpcId);
+		
+		// add active status
+		if (torrent.down_rate > 0 || torrent.up_rate > 0) {
+			gFiltersArray["status"]["active"].push(rpcId);
+		}
 	});
 }
 
