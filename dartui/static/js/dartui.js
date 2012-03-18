@@ -311,6 +311,7 @@ function buildHeader(hideIcons) {
 	
 	$(".icons svg").hover(
 		function() {
+			if ($(this).attr("id") == "filters" && $(".filter_checkbox").filter(":checked").length > 0) { return }
 			changeIconColor($(this), iconColorHover);
 		},
 		function() {
