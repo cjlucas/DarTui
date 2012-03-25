@@ -28,7 +28,7 @@ var downloadIcon = $('<svg version="1.2" baseProfile="tiny" id="Layer_1" xmlns="
 var sortIconAsc = $('<svg version="1.2" baseProfile="tiny" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="10px" height="5px" viewBox="0 0 20 10" overflow="inherit" xml:space="preserve"><g id="play_1_"><path id="toggle_color" d="M10.362,0.105L19.9,9.736C20.098,9.873,19.994,10,19.67,10H0.331c-0.325,0-0.428-0.127-0.229-0.262l9.538-9.64C9.838-0.038,10.163-0.03,10.362,0.105z"/></g></svg>');
 var sortIconDesc = $('<svg version="1.2" baseProfile="tiny" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="10px" height="5px" viewBox="0 0 20 10" overflow="inherit" xml:space="preserve"><g id="play_1_"><path id="toggle_color" d="M9.638,9.895L0.1,0.264C-0.098,0.127,0.006,0,0.33,0h19.34c0.324,0,0.428,0.127,0.229,0.262l-9.537,9.641C10.162,10.037,9.837,10.03,9.638,9.895z"/></g></svg>');
 
-var settingsHTML = simpleAjaxCall("GET", "/static/modules/settings.html", "", "html");
+var settingsHTML = $(simpleAjaxCall("GET", "/static/modules/settings.html", "", "html"));
 
 // set default colors
 changeIconColor(sortIconAsc, "#ffffff");
@@ -454,83 +454,31 @@ function getDefaultTorrentRow() {
 }
 
 function buildSettings(currentSettings, showCurrentConnectionInfo) {
-	var sections = ["RTorrent", "DarTui"];
-	var fields = {
-		"RTorrent" : {
-			"Host" : { type : "text", name : "host", info : "Default: localhost" },
-			"Port" : { type : "text", name : "port", info : "Default: 80" },
-			"Username" : { type : "text", name : "username", info : "optional" },
-			"Password" : { type : "password", name : "password", info : "optional" },
-			//"\u00a0" : { type : "button", value : "Test Connection", class : "test_conn_button" },
-		},
-		"DarTui" : {
-			"Show Torrent Age" : { type : "checkbox", name : "show_torrent_age", value : "checked" },
-			"Debug Mode" : { type : "checkbox", name : "debug", value : "checked" },
-			"Disk Usage Path" : { type : "text", name : "du_path", info : "Default: /"}
-		}
-	};
+	var settingsDiv = settingsHTML.clone();
 	
-	var settingsDiv = $("<div>").addClass("settings");
-	var form = $("<form>").attr("id", "settings").attr("method", "POST").attr("action", "/set_settings");
-	
-	$.each(fields, function(section, sectionData) {
-		form.append($("<div>").addClass("welcome_title").text(section + " Settings"));
-		
-		if (section == "DarTui") {
-			var options = {
-				"5 seconds" : 5,
-				"10 seconds" : 10,
-				"20 seconds" : 20,
-				"30 seconds" : 30,
-				"1 minute" : 60,
-				"2 minutes" : 120,
-				"5 minutes" : 300,
-				
-			}
-			var select = $("<select>").attr("name", "refresh_rate");
-			$.each(options, function(title, value) {
-				var option = $("<option>").attr("value", value).text(title);
-				if (currentSettings["refresh_rate"] == value) {
-					option.prop("selected", true);
-				}
-				select.append(option);
-			});
-			form.append($("<label>").text("Refresh Rate"));
-			form.append(select);
-			form.append($("<br>"));
-		}
-		
-		$.each(sectionData, function(key, opts) {
-			var label = $("<label>");
-			label.text(key);
-			if (opts.info != null) {
-				label.append($("<span>").addClass("default_value").text(" (" + opts.info + ")"));
-			}
-		
-			var input = $("<input>").attr(opts);
-			if (opts.type == "checkbox"){
-				input.prop("checked", currentSettings[opts.name]);
-			} else if (opts.type == "text" || opts.type == "password") {
-				if ((section == "RTorrent" && showCurrentConnectionInfo) || (section != "RTorrent")) {
-					input.attr("value", currentSettings[opts.name]);
-				}
-			}
-
-			form.append(label);
-			form.append(input);
-			form.append($("<br>"));
-		});
-		
-		if (section == "RTorrent") {
-			form.append($("<input>").attr({ type : "button", value : "Test Connection", class : "test_conn_button" }));
-			form.append($("<span>").attr({id : "conn_test_results"}));
-		}
+	// handle text fields (only if showCurrentConnectionInfo is true)
+	$.each(settingsDiv.find("input[type='text'], input[type='password']"), function(index, field) {
+		var field = settingsDiv.find("input[type='text'], input[type='password']").eq(index); // use eq to get the jquery object
+		var name = field.attr("name");
+		// don't fill in values of certain fields if showCurrentConnectionInfo is false
+		if (!showCurrentConnectionInfo && ["host", "port", "username", "password"].indexOf(name) > -1) { return }
+		field.attr("value", currentSettings[name])
 	});
-
-	//form.append($("<label>").text("\u00a0"));
-	form.append($("<input>").attr({type : "submit", value : "Submit"}));
-	settingsDiv.append(form);
+	
+	// handle checkbox fields
+	$.each(settingsDiv.find("input[type='checkbox']"), function(index, field) {
+		var field = settingsDiv.find("input[type='checkbox']").eq(index); // use eq to get the jquery object
+		var name = field.attr("name");
+		field.prop("checked", currentSettings[name]);
+	});
+	
+	// handle dropdowns
+	$.each(settingsDiv.find("select"), function(index, field) {
+		var field = settingsDiv.find("select").eq(index); // use eq to get the jquery object
+		var name = field.attr("name"); // name attr is stored in the parent element (<select>)
+		field.find("option[value='" + currentSettings[name] + "']").prop("selected", true);
 		
+	});
 	return(settingsDiv);
 }
 
@@ -542,7 +490,7 @@ function addSettingsTriggers() {
 		};
 		var inputFields = $("#settings input");
 		$.each(inputFields, function(index, field) {
-			var field = inputFields.eq(index);
+			var field = inputFields.eq(index); // use eq to get the jquery object
 			if (field.val() != "") {
 				data[field.attr("name")] = field.val();
 			}

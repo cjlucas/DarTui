@@ -55,8 +55,8 @@ class SetSettings:
             if data_type == bool:
                 # for options that use checkboxes (bool types)
                 # if they're unchecked, the key won't be in args
-                # if checked, the key will be in args with the value of "checked"
-                if key in args and args[key] == "checked":
+                # if checked, the key will be in args with the value of "checked" or "on"
+                if key in args and args[key] in ("checked", "on"):
                     settings[key] = True
                 else:
                     settings[key] = False
