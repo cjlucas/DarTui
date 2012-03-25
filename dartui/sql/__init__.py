@@ -143,28 +143,30 @@ class Database(object):
     def _rename_table(self):
         self._require_table_object()
         temp_table_name = "_{0}_backup{1}".format(self.table.name, int(time.time()))
-        query = "ALTER TABLE ? RENAME TO ?"
-        #self._execute(query, (self.table.name, temp_table_name))
+        query = "ALTER TABLE {0} RENAME TO {1}".format(self.table.name, temp_table_name)
+        print(query)
+        self._execute(query)
         return(temp_table_name)
         
-    def update_table_struct(self):
-        temp_table_name = self._rename_table()
-                
-        # drop all indices for this table
+    def update_table_struct(self):                
+        # drop all indices for this table (important to do this first)
         for index in self._get_indices():
+            if index.startswith("sqlite_autoindex"): continue
             query = "DROP INDEX IF EXISTS {0}".format(index)
             print(query)
             self._execute(query)
+            
+        # rename table
+        temp_table_name = self._rename_table()
         
         # create new table with new struct
         self.create_table()
         
         # move data from old table to new
         if self.table.preserve_data:
-            query = "INSERT INTO {0} {1} SELECT {2} FROM {3}".format(
+            query = "INSERT INTO {0} ({1}) SELECT {1} FROM {2}".format(
                 self.table.name,
-                converters.escape_sequence(self.table.columns),
-                converters.escape_sequence(self.table.columns).strip("()"),
+                ",".join(self.table.columns),
                 temp_table_name,
             )
             print(query)
@@ -176,7 +178,7 @@ class Database(object):
         self.table.columns = self._get_table_columns()
         
         # update table_versions
-        self._execute("UPDATE table_versions SET version=? WHERE name=?", (self.version, self.name))
+        self._execute("UPDATE table_versions SET version=? WHERE name=?", (self.table.version, self.table.name))
         # drop backup table
         self._execute("DROP TABLE IF EXISTS {0}".format(temp_table_name))        
         
