@@ -11,7 +11,7 @@ class Table(object):
     def __init__(self, name, version, **kwargs):
         self.name = name
         self.version = version
-        self.preserve_data = kwargs.get("preserve_data", False)
+        self.preserve_data = kwargs.get("preserve_data", False) # preserve data if table struct is updated
         self.default_values = kwargs.get("default_values", {})
         self.default_types = kwargs.get("default_types", {})
         
@@ -65,6 +65,8 @@ class Table(object):
         return(None)
         
 class KeyValueTable(Table):
+    """Use this class for a table that use key-value pairs
+    where the value for each key may be a different datatype (i.e. settings)"""
     def get_insert_defaults_query(self):
         sql_method = "_executemany"
         query = "INSERT OR IGNORE INTO {0} VALUES (?, ?)".format(self.name)
@@ -136,8 +138,6 @@ class Database(object):
         self.conn.commit()
         
     def _call_sql_method(self, sql_method, args):
-        #print(sql_method)
-        #print(args)
         getattr(self, sql_method)(*args)
         
     def _rename_table(self):
@@ -149,8 +149,7 @@ class Database(object):
         
     def update_table_struct(self):
         temp_table_name = self._rename_table()
-        print(temp_table_name)
-        
+                
         # drop all indices for this table
         for index in self._get_indices():
             query = "DROP INDEX IF EXISTS {0}".format(index)
@@ -160,6 +159,7 @@ class Database(object):
         # create new table with new struct
         self.create_table()
         
+        # move data from old table to new
         if self.table.preserve_data:
             query = "INSERT INTO {0} {1} SELECT {2} FROM {3}".format(
                 self.table.name,
@@ -170,6 +170,7 @@ class Database(object):
             print(query)
             self._execute(query)
         
+        # insert (possible) new default values (won't overwrite current data)
         self.insert_defaults()    
         # update table columns to reflect (possible) new table struct
         self.table.columns = self._get_table_columns()
@@ -247,11 +248,11 @@ tables = {
             "du_path"           : str,
         },
     ),
-    "ip2nation" : Table(
-        name = "ip2nation",
-        version = 1.0,
-        preserve_data = False,
-    )
+    #"ip2nation" : Table(
+    #    name = "ip2nation",
+    #    version = 1.0,
+    #    preserve_data = False,
+    #)
 }
 
 for t in tables:
