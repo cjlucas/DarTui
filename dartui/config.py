@@ -27,12 +27,7 @@ class ConfigDir:
         if self.db_conn is not None: return(True)
         else: return(False)
         
-    def set_db_exists(self):
-        if os.path.isfile(self.db_path): self.db_exists = True
-        else: self.db_exists = False
-        
     def _set_default_values(self):
-        self.db_exists = False
         self.settings = {}
         self.rt = None
         
@@ -45,7 +40,6 @@ class ConfigDir:
     def refresh(self):
         self._set_default_values()
         
-        self.set_db_exists()
         db = self.get_db(sql.tables["settings"])
         self.settings = db.get_table_contents()
         
