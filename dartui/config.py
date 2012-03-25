@@ -12,13 +12,17 @@ class ConfigDir:
         self.db_name = "dartui.db"
         self.db_path = os.path.join(self.config_path, self.db_name)
         
-        self._insert_default_db_values()
         self.refresh()
         
-    def _insert_default_db_values(self):
-        db = self.get_db()
-        db._insert_default_values()
-        
+        self.table_versions = self.get_table_versions()
+
+    def get_table_versions(self):
+        table_versions = {}
+        db = self.get_db(sql.tables["table_versions"])
+        for row in db.get_table_contents():
+            table_versions[row["name"]] = row["version"]
+        return(table_versions)
+
     def has_db_conn(self):
         if self.db_conn is not None: return(True)
         else: return(False)
@@ -33,27 +37,21 @@ class ConfigDir:
         self.rt = None
         
     def update_settings(self, settings):
-        db = self.get_db()
-        db.update_settings(**settings)
-        self.settings = db.get_settings()
+        settings["show_welcome"] = False # no need to show welcome screen after user has updated settings
+        db = self.get_db(sql.tables["settings"])
+        db.update_table_contents(settings)
+        self.settings = db.get_table_contents()
         
     def refresh(self):
         self._set_default_values()
         
         self.set_db_exists()
-        db = self.get_db()
-        if not self.db_exists:
-            # if database is new, create tables
-            db.create_tables()
-            db.close()
+        db = self.get_db(sql.tables["settings"])
+        self.settings = db.get_table_contents()
         
         self.get_rt_connection()
-        self.settings = db.get_settings()
         
     def get_rt_url(self):
-        db = self.get_db()
-        self.settings = db.get_settings()
-        
         self.rt_url = utils.build_url(
                         self.settings["host"],
                         self.settings["port"],
@@ -70,8 +68,8 @@ class ConfigDir:
         self.torrent_cache = []
         return(self.rt)
         
-    def get_db(self):
-        return(sql.Database(self.db_path))
+    def get_db(self, table_obj=None):
+        return(sql.Database(self.db_path, table_obj))
     
     def get_rt(self):
         return(self.rt)

@@ -51,7 +51,7 @@ class SetSettings:
     def POST(self):
         args = web.input()
         settings = {}
-        for key, data_type in sql.Database.DATA_TYPES.items():
+        for key, data_type in sql.tables["settings"].default_types.items():
             if data_type == bool:
                 # for options that use checkboxes (bool types)
                 # if they're unchecked, the key won't be in args
@@ -87,9 +87,9 @@ class SetSettings:
         
 class GetSettings:
     def main(self):
-        db = common.conf.get_db()
-        settings = db.get_settings()
-        db.close()
+        #db = common.conf.get_db(sql.tables["settings"])
+        settings = common.conf.settings
+        #db.close()
         # remove sensitive info
         if settings["password"] is not None:
             settings["password"] = "*" * len(settings["password"])
@@ -199,3 +199,18 @@ class TestConnection:
         url = utils.build_url(host, port, username, password)
         conn_status = utils.test_xmlrpc_connection(url)
         return(process_output(to_json(conn_status)))
+        
+class FileUploadTest:
+    def GET(self):
+        return(render.fileupload())
+
+class FileUploadAction:
+    def POST(self):
+        print(web.webapi.rawinput())
+        x = web.input(myfiles={})
+        print(x['myfiles'])
+        #print(x['myfiles'].__dict__)
+        #web.debug(x['myfiles'].filename) # This is the filename
+        #web.debug(x['myfiles'].value) # This is the file contents
+        #web.debug(x['myfiles'].file.read()) # Or use a file(-like) object
+        #raise web.seeother('/upload')
