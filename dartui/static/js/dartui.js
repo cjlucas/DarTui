@@ -318,7 +318,7 @@ function buildHeader(hideIcons) {
 			if ($(this).attr("id") == "filters" && $(".filter_menu").css("right") == "0px") {
 				// if filter menu is visible, keep hover icon
 				return
-			}
+			} else if ($(this).attr("id") == "filters" && $(".filter_checkbox").filter(":checked").length > 0) { return }
 			changeIconColor($(this), iconColorIdle);
 		}
 	);
