@@ -304,7 +304,7 @@ function buildHeader(hideIcons) {
 	}
 	
 	var icons = $("<div>").addClass("icons");
-	icons.append(changeIconColor(uploadIcon, iconColorIdle));
+	//icons.append(changeIconColor(uploadIcon, iconColorIdle));
 	icons.append(changeIconColor(filtersIcon, iconColorIdle));
 	icons.append(changeIconColor(settingsIcon, iconColorIdle));
 	headerDiv.append(icons);
