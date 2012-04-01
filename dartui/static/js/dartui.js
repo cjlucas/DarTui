@@ -865,9 +865,10 @@ function getTorrentStatus(t) {
 }
 
 function centerDropDown() {
-	var dropDownWidth = $(".dropdown").outerWidth();
-	var wrapperWidth = $(".wrapper").outerWidth();
-	var leftPos = (wrapperWidth - dropDownWidth) / 2;
+	//var dropDownWidth = $(".dropdown").outerWidth();
+	var documentWidth = $(document).outerWidth();
+	var dropDownWidth = (documentWidth * 0.6) + 100; // width: 60% + 100px of padding
+	var leftPos = (documentWidth - dropDownWidth) / 2;
 	$(".dropdown").css("left", leftPos + "px");
 }
 function showDropDown(data) {
