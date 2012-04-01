@@ -22,8 +22,8 @@ body {
 	position: relative;
 }
 .dropdown {
-	width: 80%;
-	position: absolute;
+	width: 60%;
+	position: fixed;
 	background-color: white;
 	border: 1px solid #b9b9b9;
 	border-top: 0px;
@@ -236,19 +236,7 @@ body {
 	right: 0; 
 	bottom: 0;
 }
-.dropdown_container {
-	display: none;
-	height: 200px; 
-	background-color: white;
-	border-left-width: 1px;
-	border-top-width: 1px;
-	border-right-width: 1px;
-	border-bottom-width: 0px;
-}
-.dropdown_container_bottom {
-	border-bottom-width: 1px;
-	border-top-width: 0px;
-}
+
 .filter_menu {
 	position: fixed;
 	right: -150px;
@@ -346,10 +334,15 @@ body {
 .result_failed {
 	color: #ea1a2d;
 }
-.settings {
-	padding-left: 50px;
+.dropdown, .welcome {
 	text-align: left;
 	font-size: .9em;
+}
+.dropdown:first-child, .welcome:first-child {
+	/*padding-top: 20px; handled by .welcome_title */
+	padding-left: 50px;
+	padding-right: 50px;
+	padding-bottom: 10px;
 }
 .settings label {
 	width: 170px;
@@ -376,15 +369,60 @@ br {
 .welcome_title {
 	text-align: left;
 	font-size: 1.5em;
-	color: #a0a0a0;
+	color: #b9b9b9;
 	border-bottom: 1px solid #b9b9b9;
 	padding-bottom: 5px;
-	/*margin-left: 50px;*/
-	margin-right: 20px;
+	/*
+	margin-left: 50px;
+	margin-right: 20px; handled by .dropdown:first-child
+	*/
 	margin-top: 20px;
 	margin-bottom: 20px;
+}
+.dropdown h2, .welcome h2 {
+	font-weight: normal;
+	color: #b9b9b9;
+	border-bottom: 1px solid;
+	padding-bottom: 5px;
 }
 .footer {
 	text-align: center;
 	font-size: .7em;
+}
+#upload {
+	font-size: .8em;
+}
+#upload #dropzone {
+	margin-left: 30%;
+	margin-right: 30%;
+	padding: 30px;
+	font-size: 2em;
+	border: 3px dashed #b9b9b9;
+	text-align: center;
+	background-color: #ececec;
+}
+#upload table {
+	/*border: 1px solid #e0e0e0;*/
+	border-collapse:collapse;
+	width: 100%;
+	table-layout: fixed; /* for ellipsis support */
+	font-size: 1em;
+	margin: auto;
+	margin-bottom: 10px;
+}
+#upload tr {
+	border-bottom: 1px solid #E0E0E0;
+	white-space: nowrap; /* for ellipsis support */
+}
+#upload td {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	padding: 8px;
+}
+#upload td:nth-child(1) {
+	width: 95%;
+}
+#upload input[type="radio"] {
+	width: 20px;
+	margin-bottom: 10px;
 }

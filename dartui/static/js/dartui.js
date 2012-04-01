@@ -11,6 +11,7 @@ var gRpcIdArray = [];
 var gRpcIdArrayCurrentView = [];
 var gFiltersArray = {};
 var gClientInfo = {};
+var gFilesToUpload = [];
 var gErrorCode = 0;
 
 var iconColorIdle = "#2d2d2d";
@@ -24,15 +25,18 @@ var deleteIcon = $('<svg version="1.2" baseProfile="tiny" xmlns="http://www.w3.o
 var rehashIcon = $('<svg version="1.2" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="20px" height="20px" viewBox="0 0 20 20" overflow="inherit" xml:space="preserve"><g id="refresh"><path id="toggle_color" d="M17.976,16.072c-3.236,4.262-9.229,5.224-13.642,2.189l-0.049-0.033l-1.274,1.677c-0.139,0.183-0.304,0.151-0.367-0.068l-1.487-5.218c-0.062-0.221,0.073-0.4,0.303-0.398l5.425,0.032c0.229,0.002,0.305,0.151,0.165,0.335l-1.246,1.642c3.305,2.235,7.764,1.508,10.178-1.671c1.491-1.963,1.856-4.426,1.221-6.63h2.574C20.362,10.681,19.808,13.66,17.976,16.072z M2.796,12.102C2.16,9.897,2.526,7.434,4.017,5.471C6.43,2.292,10.89,1.565,14.195,3.8l-1.247,1.642c-0.139,0.183-0.064,0.333,0.165,0.334l5.425,0.033c0.229,0.001,0.366-0.178,0.304-0.398l-1.487-5.217c-0.063-0.221-0.229-0.252-0.366-0.069l-1.275,1.677l-0.049-0.033C11.252-1.266,5.259-0.305,2.023,3.957C0.19,6.369-0.363,9.349,0.224,12.102H2.796L2.796,12.102z"/></g></svg>');
 var settingsIcon = $('<svg version="1.2" baseProfile="tiny" id="settings" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="35px" height="35px" viewBox="0 0 35 35" overflow="inherit" xml:space="preserve"><path id="toggle_color" d="M35,17.502C35,27.167,27.164,35,17.5,35S0,27.167,0,17.502C0,7.833,7.836,0,17.5,0S35,7.833,35,17.502z"/><g id="cogwheels"><path id="cogwheels_1_" fill="#FFFFFF" d="M22.117,15.097c0.019-0.22,0.03-0.438,0.034-0.659c0-0.224-0.012-0.445-0.03-0.663l-1.384-0.351c-0.071-0.458-0.19-0.902-0.35-1.328l1.031-0.991c-0.188-0.401-0.408-0.785-0.657-1.145l-1.379,0.388c-0.286-0.356-0.609-0.682-0.964-0.971l0.397-1.376c-0.36-0.25-0.739-0.476-1.141-0.665l-0.999,1.026c-0.421-0.165-0.864-0.286-1.322-0.36l-0.344-1.388c-0.216-0.02-0.437-0.033-0.659-0.031c-0.222-0.002-0.443,0.008-0.662,0.027L13.34,7.996c-0.458,0.07-0.903,0.19-1.327,0.352l-0.992-1.033c-0.401,0.186-0.783,0.406-1.144,0.656l0.39,1.378c-0.359,0.286-0.686,0.61-0.972,0.966L7.919,9.916c-0.251,0.36-0.476,0.741-0.664,1.14l1.025,1c-0.166,0.42-0.286,0.863-0.361,1.323L6.531,13.72c-0.018,0.22-0.03,0.438-0.031,0.661c-0.001,0.223,0.009,0.441,0.026,0.659l1.385,0.353c0.072,0.461,0.191,0.903,0.353,1.325L7.229,17.71c0.188,0.403,0.408,0.784,0.657,1.144l1.377-0.387c0.287,0.357,0.61,0.684,0.967,0.973l-0.399,1.375c0.36,0.252,0.74,0.477,1.139,0.666l1.001-1.025c0.42,0.16,0.863,0.285,1.32,0.357l0.341,1.387c0.22,0.021,0.44,0.035,0.663,0.037c0.224,0,0.442-0.014,0.66-0.031l0.353-1.383c0.459-0.072,0.904-0.189,1.325-0.35l0.991,1.033c0.402-0.188,0.787-0.406,1.146-0.66l-0.388-1.377c0.356-0.285,0.684-0.611,0.973-0.967l1.375,0.398c0.25-0.357,0.477-0.738,0.667-1.138l-1.027-1c0.164-0.421,0.287-0.863,0.36-1.321L22.117,15.097z M14.312,17.571c-1.746-0.009-3.156-1.429-3.149-3.175c0.006-1.746,1.427-3.156,3.173-3.149c1.747,0.006,3.158,1.427,3.151,3.172C17.478,16.166,16.058,17.577,14.312,17.571zM28.473,23.068l-0.999-0.379c-0.094-0.404-0.243-0.783-0.443-1.131l0.479-0.957c-0.243-0.324-0.523-0.613-0.839-0.871l-0.977,0.439c-0.339-0.211-0.71-0.377-1.108-0.482l-0.338-1.016c-0.196-0.027-0.396-0.045-0.602-0.049c-0.203-0.006-0.407,0.008-0.605,0.027l-0.375,1c-0.403,0.092-0.781,0.24-1.127,0.439l-0.96-0.479c-0.321,0.246-0.614,0.523-0.868,0.836l0.438,0.979c-0.217,0.338-0.379,0.711-0.485,1.111l-1.017,0.34c-0.027,0.193-0.047,0.398-0.05,0.602c-0.004,0.207,0.005,0.404,0.025,0.607l1.002,0.375c0.091,0.404,0.24,0.783,0.441,1.127l-0.476,0.959c0.241,0.324,0.525,0.617,0.835,0.871l0.979-0.439c0.337,0.213,0.708,0.377,1.107,0.484l0.336,1.014c0.198,0.029,0.4,0.045,0.604,0.051c0.206,0.004,0.407-0.006,0.604-0.027l0.379-1c0.4-0.092,0.777-0.24,1.127-0.441l0.956,0.479c0.325-0.242,0.619-0.525,0.873-0.838l-0.441-0.977c0.213-0.336,0.379-0.709,0.486-1.111l1.014-0.332c0.03-0.201,0.047-0.402,0.051-0.607C28.503,23.469,28.495,23.266,28.473,23.068z M23.511,25.396c-1.005-0.021-1.805-0.852-1.783-1.857c0.019-1.006,0.85-1.805,1.856-1.785c1.005,0.02,1.803,0.852,1.784,1.857C25.35,24.615,24.518,25.416,23.511,25.396z"/></g></svg>');
 var filtersIcon = $('<svg version="1.2" baseProfile="tiny" id="filters" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="35px" height="35px" viewBox="0 0 35 35" overflow="inherit" xml:space="preserve"><path id="toggle_color" d="M35,17.5C35,27.168,27.164,35,17.5,35C7.834,35,0,27.168,0,17.5C0,7.834,7.834,0,17.5,0C27.164,0,35,7.834,35,17.5z"/><path fill="#FFFFFF" d="M15.177,8.577c-0.15-0.15-0.447-0.273-0.66-0.273h-6.88c-0.213,0-0.387,0.174-0.387,0.386v6.882c0,0.212,0.123,0.51,0.273,0.659l10.353,10.355c0.151,0.149,0.397,0.149,0.547,0l7.107-7.11c0.151-0.149,0.151-0.396,0-0.544L15.177,8.577z M12.136,13.189c-0.604,0.604-1.583,0.604-2.188,0c-0.604-0.604-0.604-1.583,0-2.187s1.583-0.604,2.188,0C12.739,11.606,12.739,12.585,12.136,13.189z M29.896,19.751l-6.561,6.561c-0.151,0.15-0.513,0.388-0.622,0.348c-0.108-0.041-0.32-0.197-0.472-0.348l-0.533-0.532c-0.15-0.151-0.15-0.397,0-0.548l5.481-5.48c0.15-0.151,0.391-0.515,0.348-0.622c-0.041-0.111-0.198-0.321-0.348-0.473L17.383,8.85c-0.15-0.15-0.362-0.347-0.406-0.372c-0.042-0.025-0.106-0.074-0.142-0.11s0.109-0.065,0.322-0.065h1.612c0.213,0,0.7,0.061,0.824,0.137c0.122,0.075,0.346,0.26,0.496,0.41l9.807,9.806c0.15,0.151,0.308,0.365,0.349,0.473C30.286,19.238,30.047,19.6,29.896,19.751z"/></svg>');
-var uploadIcon = $('<svg version="1.2" baseProfile="tiny" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="35px" height="35px" viewBox="0 0 35 35" overflow="inherit" xml:space="preserve"><circle id="toggle_color" cx="17.5" cy="17.5" r="17.5"/><g id="download_x5F_alt_1_"><g><path fill="#FFFFFF" d="M10.618,14.485c-0.138-0.179-0.065-0.336,0.161-0.336h4.096V5.777c0-0.228,0.229-0.428,0.456-0.428h4.396c0.227,0,0.39,0.201,0.39,0.428v8.372h4.176c0.227,0,0.296,0.156,0.158,0.335l-6.663,7.737c-0.139,0.179-0.366,0.179-0.504-0.001L10.618,14.485z"/></g><g><path fill="#FFFFFF" d="M27.528,21.973h-0.402h-1.312H9.153H8.75H7.437C7.197,21.973,7,22.171,7,22.411v2.222v1.277v0.438h0.437h1.751h16.625h1.748H28V25.91v-1.277v-2.222C28,22.171,27.769,21.973,27.528,21.973z M26.249,24.598h-1.748v-0.874h1.748V24.598z"/></g></g></svg>');
+var uploadIcon = $('<svg version="1.2" baseProfile="tiny" id="upload" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="35px" height="35px" viewBox="0 0 35 35" overflow="inherit" xml:space="preserve"><circle id="toggle_color" cx="17.5" cy="17.5" r="17.5"/><g id="download_x5F_alt_1_"><g><path fill="#FFFFFF" d="M10.618,14.485c-0.138-0.179-0.065-0.336,0.161-0.336h4.096V5.777c0-0.228,0.229-0.428,0.456-0.428h4.396c0.227,0,0.39,0.201,0.39,0.428v8.372h4.176c0.227,0,0.296,0.156,0.158,0.335l-6.663,7.737c-0.139,0.179-0.366,0.179-0.504-0.001L10.618,14.485z"/></g><g><path fill="#FFFFFF" d="M27.528,21.973h-0.402h-1.312H9.153H8.75H7.437C7.197,21.973,7,22.171,7,22.411v2.222v1.277v0.438h0.437h1.751h16.625h1.748H28V25.91v-1.277v-2.222C28,22.171,27.769,21.973,27.528,21.973z M26.249,24.598h-1.748v-0.874h1.748V24.598z"/></g></g></svg>');
 var sortIconAsc = $('<svg version="1.2" baseProfile="tiny" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="10px" height="5px" viewBox="0 0 20 10" overflow="inherit" xml:space="preserve"><g id="play_1_"><path id="toggle_color" d="M10.362,0.105L19.9,9.736C20.098,9.873,19.994,10,19.67,10H0.331c-0.325,0-0.428-0.127-0.229-0.262l9.538-9.64C9.838-0.038,10.163-0.03,10.362,0.105z"/></g></svg>');
 var sortIconDesc = $('<svg version="1.2" baseProfile="tiny" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="10px" height="5px" viewBox="0 0 20 10" overflow="inherit" xml:space="preserve"><g id="play_1_"><path id="toggle_color" d="M9.638,9.895L0.1,0.264C-0.098,0.127,0.006,0,0.33,0h19.34c0.324,0,0.428,0.127,0.229,0.262l-9.537,9.641C10.162,10.037,9.837,10.03,9.638,9.895z"/></g></svg>');
+var xIcon = $('<svg version="1.2" baseProfile="tiny" id="close" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"x="0px" y="0px" width="35px" height="35px" viewBox="0 0 35 35" overflow="inherit" xml:space="preserve"><g id="circle_x5F_remove"><path id="toggle_color" d="M29.875,5.126c-6.834-6.834-17.916-6.834-24.75,0c-6.834,6.834-6.834,17.913,0,24.748c6.835,6.834,17.916,6.835,24.748,0C36.709,23.04,36.709,11.959,29.875,5.126z M22.551,25.58c-0.277,0.278-0.732,0.278-1.01,0l-2.525-2.524l-1.01-1.011L17.5,21.54l-0.505,0.505l-1.01,1.011l-2.526,2.524c-0.278,0.278-0.732,0.278-1.011,0l-3.03-3.03c-0.277-0.277-0.277-0.732,0-1.01l2.525-2.525l1.011-1.01l0.505-0.505l-0.505-0.505l-1.011-1.01l-2.525-2.524c-0.277-0.279-0.277-0.734,0-1.011l3.03-3.03c0.278-0.278,0.732-0.278,1.011,0l2.526,2.524l1.01,1.011L17.5,13.46l0.506-0.505l1.01-1.011l2.525-2.524c0.277-0.278,0.732-0.278,1.01,0l3.031,3.03c0.277,0.277,0.277,0.732,0,1.01l-2.525,2.525l-1.012,1.01L21.541,17.5l0.504,0.505l1.012,1.01l2.525,2.525c0.277,0.278,0.277,0.733,0,1.01L22.551,25.58z"/></g></svg>');
 
 var settingsHTML = $(simpleAjaxCall("GET", "/static/modules/settings.html", "", "html"));
+var torrentUploadHTML = $(simpleAjaxCall("GET", "/static/modules/upload.html", "", "html"));
 
 // set default colors
 changeIconColor(sortIconAsc, "#ffffff");
 changeIconColor(sortIconDesc, "#ffffff");
+changeIconColor(xIcon, "#b9b9b9");
 
 /* keep track of if the window is scrolling or not.
   scrolling while refreshRows is executing causes jerkiness */
@@ -304,7 +308,7 @@ function buildHeader(hideIcons) {
 	}
 	
 	var icons = $("<div>").addClass("icons");
-	//icons.append(changeIconColor(uploadIcon, iconColorIdle));
+	icons.append(changeIconColor(uploadIcon, iconColorIdle));
 	icons.append(changeIconColor(filtersIcon, iconColorIdle));
 	icons.append(changeIconColor(settingsIcon, iconColorIdle));
 	headerDiv.append(icons);
@@ -333,6 +337,10 @@ function buildHeader(hideIcons) {
 	$(".icons svg#settings").click(function () {
 		showDropDown(buildSettings(gSettingsArray, true));
 		addSettingsTriggers();
+	});
+	$(".icons svg#upload").click(function() {
+		showDropDown(updateTorrentUploadForm());
+		addTorrentUploadTriggers();
 	});
 }
 
@@ -857,8 +865,8 @@ function getTorrentStatus(t) {
 }
 
 function centerDropDown() {
-	var dropDownWidth = $(".dropdown").width();
-	var wrapperWidth = $(".wrapper").width();
+	var dropDownWidth = $(".dropdown").outerWidth();
+	var wrapperWidth = $(".wrapper").outerWidth();
 	var leftPos = (wrapperWidth - dropDownWidth) / 2;
 	$(".dropdown").css("left", leftPos + "px");
 }
@@ -870,14 +878,11 @@ function showDropDown(data) {
 	$(".shadow").show();
 	$(".shadow").animate({opacity : "0.8"}, "fast");
 	
-	$(".dropdown_close_button").click(function () {
+	$(".dropdown_close_button, .shadow").click(function () {
 		hideDropDown();
 	});
-	$(".shadow").click(function () {
-		hideDropDown();
-	});
-	
 }
+
 function hideDropDown() {
 	$(".dropdown").slideUp("fast");
 	$(".shadow").animate(
@@ -888,6 +893,10 @@ function hideDropDown() {
 			$(".shadow").hide();
 		}
 	);
+}
+
+function isDropDownActive() {
+	return($(".dropdown").css("display") == "block");
 }
 
 function toggleBatchActions(display) {

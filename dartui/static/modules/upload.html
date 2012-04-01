@@ -1,0 +1,17 @@
+<div class="welcome_title">Upload Torrents</div>
+<div id="upload">
+	<form id="torrent_upload" method="POST" enctype="multipart/form-data" action="/file_upload_action">
+		<div id="dropzone">Drop files here</div>
+		<table></table>
+		<div>
+			<input type="file" id="files" name="files[]" multiple />
+			<h2>Select a destination</h2>
+			<input type="radio" name="upload_dir" id="text" checked/><label for="text"><input type="text" value="/Volumes/stuff/tv/"/></label>
+			<input type="radio" name="upload_dir" id="dropdown"/><label for="dropdown"><select><option>1></option><option>2</option></select></label><br />
+			<div style="float: right; display: inline-block;">
+				<span></span>
+				<input type="submit" value="Upload" /><input type="button" value="Cancel" />
+			</div>
+		</div>
+	</form>
+</div>

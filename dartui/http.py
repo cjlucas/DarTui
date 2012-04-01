@@ -9,7 +9,9 @@ urls = (
     "/get_settings", "dartui.pages.GetSettings",
     "/refresh_rows", "dartui.pages.RefreshRows",
     "/torrent", "dartui.pages.TorrentAction",
-    "/test_connection", "dartui.pages.TestConnection"
+    "/test_connection", "dartui.pages.TestConnection",
+    "/file_upload_test", "dartui.pages.FileUploadTest",
+    "/file_upload_action", "dartui.pages.FileUploadAction",
 )
 
 os.chdir(os.path.dirname(__file__))

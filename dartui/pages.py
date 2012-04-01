@@ -206,9 +206,10 @@ class FileUploadTest:
 
 class FileUploadAction:
     def POST(self):
-        print(web.webapi.rawinput())
+        #print(web.webapi.rawinput())
         x = web.input(myfiles={})
-        print(x['myfiles'])
+        print("uploaded")
+        #print(x['myfiles'])
         #print(x['myfiles'].__dict__)
         #web.debug(x['myfiles'].filename) # This is the filename
         #web.debug(x['myfiles'].value) # This is the file contents
