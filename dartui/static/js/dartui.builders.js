@@ -6,12 +6,12 @@ function addTorrentUploadTriggers() {
 	document.getElementById('files').addEventListener('change', handleFileSelect, false);
 	$("#torrent_upload").submit(function(e) {
 		e.preventDefault();
-		torrentUploadHTML.find("span").eq(-1).text("penis");
 		$(this).fileupload({url : "/file_upload_action", paramName : "files"});
 		$(this).fileupload("send", {files : gFilesToUpload});
 		$(this).bind("fileuploadprogress", function(e, data) {
 			console.log(e);
 			console.log(data);
+			torrentUploadHTML.find("span").eq(-1).text(parseInt(data.loaded / data.total));
 		});
 		$(this).fileupload("destroy");
 	});
