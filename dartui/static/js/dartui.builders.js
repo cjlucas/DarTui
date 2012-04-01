@@ -11,7 +11,7 @@ function addTorrentUploadTriggers() {
 		$(this).bind("fileuploadprogress", function(e, data) {
 			console.log(e);
 			console.log(data);
-			torrentUploadHTML.find("span").eq(-1).text(parseInt(data.loaded / data.total) * 100);
+			torrentUploadHTML.find("span").eq(-1).text(parseInt((data.loaded / data.total) * 100);
 		});
 		$(this).fileupload("destroy");
 	});
