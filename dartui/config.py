@@ -73,7 +73,7 @@ class ConfigDir:
                         
         return(self.rt_url)
         
-    def get_rt_connection(self):
+    def get_rt_connection(self): # TODO: rename?
         self.rt = utils.get_rtorrent_connection(self.get_rt_url())
         self.tracker_cache = {}
         self.old_torrent_cache = []
@@ -84,4 +84,9 @@ class ConfigDir:
         return(sql.Database(self.db_path, table_obj))
     
     def get_rt(self):
-        return(self.rt)
+        # httplib (via xmlrpclib) throws CannotSendRequest and ResponseNotReady exceptions
+        # because HttpRequest objects shouldn't be shared as they in rtorrent-python
+        # (see: http://stackoverflow.com/questions/3231543/python-httplib-responsenotready)
+        # because of this, we'll have to work around that until rtorrent-python is fixed
+        # by creating a new RTorrent object everytime
+        return(utils.get_rtorrent_connection(self.get_rt_url()))
