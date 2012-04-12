@@ -401,6 +401,7 @@ br {
 	text-align: center;
 	background-color: #ececec;
 }
+
 #upload table {
 	/*border: 1px solid #e0e0e0;*/
 	border-collapse:collapse;
@@ -414,9 +415,6 @@ br {
 	border-bottom: 1px solid #E0E0E0;
 	white-space: nowrap; /* for ellipsis support */
 }
-#upload tr:last-child {
-	border-bottom: 0px;
-}
 #upload td {
 	text-overflow: ellipsis;
 	overflow: hidden;
@@ -425,7 +423,23 @@ br {
 #upload td:nth-child(1) {
 	width: 95%;
 }
+#upload input[type="file"] {
+	margin-bottom: 10px;
+}
 #upload input[type="radio"] {
 	width: 20px;
 	margin-bottom: 10px;
+}
+#upload #upload_note {
+	float: right;
+}
+#upload div#table {
+	width: 100%;
+	display: table;
+	table-layout: fixed;
+}
+#upload #table span {
+	overflow: hidden;
+	white-space: nowrap;
+	display: table-cell;
 }
