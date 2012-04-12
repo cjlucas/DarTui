@@ -9,7 +9,7 @@ USAGE
 	- When the Batch Actions Menu is showing
 		- S - Start selected torrents
 		- P - Pause selected torrents
-		- D - Deleted selected torrents
+		- D - Delete selected torrents
 		- R - Rehash selected torrents
 
 REQUIREMENTS
