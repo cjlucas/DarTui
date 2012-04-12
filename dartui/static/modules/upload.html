@@ -3,13 +3,14 @@
 	<form id="torrent_upload" method="POST" enctype="multipart/form-data" action="/file_upload_action">
 		<div id="dropzone">Drop files here</div>
 		<table></table>
+		<input type="file" id="files" name="files[]" multiple />
+		<b id="upload_note">NOTE: Only .torrent or .zip files less than 4MB allowed.</b>
+		<h2>Select a destination</h2>
 		<div>
-			<input type="file" id="files" name="files[]" multiple />
-			<h2>Select a destination</h2>
 			<input type="radio" name="upload_dir" id="text" checked/><label for="text"><input type="text" value="/Volumes/stuff/tv/"/></label>
 			<input type="radio" name="upload_dir" id="dropdown"/><label for="dropdown"><select><option>1></option><option>2</option></select></label><br />
 			<div style="float: right; display: inline-block;">
-				<span></span>
+				<span id="upload_status"></span>
 				<input type="submit" value="Upload" /><input type="button" value="Cancel" />
 			</div>
 		</div>

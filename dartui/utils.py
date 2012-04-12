@@ -1,6 +1,7 @@
 import rtorrent
 import os
 import xmlrpclib
+import zipfile
 from urlparse import parse_qs
 from collections import namedtuple
 from gzip import GzipFile
@@ -83,7 +84,34 @@ def test_xmlrpc_connection(url):
     
 def get_rtorrent_connection(url):
     try:
-        obj = rtorrent.RTorrent(url)
+        return(rtorrent.RTorrent(url))
     except:
-        obj = None
-    return(obj)
+        return(None)
+    
+def safe_filename(s):
+    RESERVED_CHARS = r"[]/\;,><&*:%=+@!#^|?^\"'"
+    return("".join([c for c in s if c not in RESERVED_CHARS]))
+    
+class TorrentFile(StringIO, object):
+    """A simple extension of StringIO that includes torrent-related attributes"""
+    def __init__(self, name, data):
+        super(TorrentFile, self).__init__(data)
+        self.name = os.path.basename(name) # we just want the filename
+        self.info_hash = rtorrent.lib.torrentparser.TorrentParser(data)._calc_info_hash()
+    
+def get_torrent_files(f):
+    """
+    Input:
+      f -- cgi.FileStorage object   
+    Returns:
+      torrent_files -- a list of TorrentFile objects
+    """
+    torrent_files = []
+    if f.filename.lower().endswith(".zip"):
+        z = zipfile.ZipFile(f.file)
+        torrent_files = [TorrentFile(name=zi.filename, data=z.open(zi).read()) \
+            for zi in z.infolist() if zi.filename.lower().endswith(".torrent")]
+    elif f.filename.lower().endswith(".torrent"):
+        torrent_files = [TorrentFile(name=f.filename, data=f.file.read())]
+        
+    return(torrent_files)

@@ -112,10 +112,7 @@ class GetTorrents:
         json_data["error_msg"] = ""
         
         if rt is not None:
-            try:
-                rt.update()
-            except: # workaround for httplib.ResponseNotReady
-                pass
+            rt.update()
             torrents = actions.get_torrents_and_update_cache()
             json_data["trackers"] = common.conf.tracker_cache
             
@@ -148,12 +145,12 @@ class GetTorrents:
                 json_data["client_info"]["dartui_version"] = common.__version__
         else:
             json_data["error_code"] = 1
-            json_data["error_msg"] = "Could not connect to rTorrent instance."
+            json_data["error_msg"] = "Couldn't connect to rTorrent."
       
         return(to_json(json_data))
         
     def GET(self):
-        """ only call process_output() if data is being sent to immediately to browser"""
+        """only call process_output() if data is being sent to immediately to browser"""
         return(process_output(self.main()))
         
 class TorrentAction:
@@ -206,12 +203,8 @@ class FileUploadTest:
 
 class FileUploadAction:
     def POST(self):
-        #print(web.webapi.rawinput())
-        x = web.input(myfiles={})
-        print("uploaded")
-        #print(x['myfiles'])
-        #print(x['myfiles'].__dict__)
-        #web.debug(x['myfiles'].filename) # This is the filename
-        #web.debug(x['myfiles'].value) # This is the file contents
-        #web.debug(x['myfiles'].file.read()) # Or use a file(-like) object
-        #raise web.seeother('/upload')
+        # TODO: return JSON data detailing success/failure of adding files
+        files = web.webapi.rawinput()["files"]
+        if not isinstance(files, list): files = [files] # when only one file is uploaded
+        for f in files:
+            actions.handle_uploaded_file(f)

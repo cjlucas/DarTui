@@ -2,32 +2,47 @@ function updateTorrentUploadForm() {
 	buildTorrentUploadFileTable();
 	return(torrentUploadHTML);
 }
+function resetTorrentUploadForm() {
+	gQueuedFiles = [];
+	hideDropDown();
+	updateTorrentUploadForm();
+}
 function addTorrentUploadTriggers() {
 	document.getElementById('files').addEventListener('change', handleFileSelect, false);
 	$("#torrent_upload").submit(function(e) {
 		e.preventDefault();
+		// filter to get only valid files
+		var validQueuedFiles = gQueuedFiles.filter(function(file) { return(file.valid) });
+		var validFiles = validQueuedFiles.map(function(queuedFile) { return(queuedFile.file) }); // get file objects for all valid files 
+		$(this).unbind();
+		
 		$(this).fileupload({url : "/file_upload_action", paramName : "files"});
-		$(this).fileupload("send", {files : gFilesToUpload});
+		$(this).fileupload("send", {files : validFiles});
+		
 		$(this).bind("fileuploadprogress", function(e, data) {
-			console.log(e);
-			console.log(data);
-			torrentUploadHTML.find("span").eq(-1).text(parseInt((data.loaded / data.total) * 100));
+			setTorrentUploadStatus("Uploading... " + parseInt((data.loaded / data.total) * 100) + "% complete.");
 		});
-		$(this).fileupload("destroy");
+		$(this).bind("fileuploaddone", function(e, data) {
+			log("fileuploaddone");
+			resetTorrentUploadForm();
+		});
+		$(this).bind("fileuploadalways", function(e, data) {
+			log("fileuploadalways");
+			$(this).fileupload("destroy");
+		});
+		
 	});
 	
 	$("#torrent_upload input[value='Cancel']").click(function() {
-		gFilesToUpload = [];
-		updateTorrentUploadForm();
-		hideDropDown();
+		resetTorrentUploadForm();
 	});
 	
 	$("#upload #close").unbind();
 	$("#upload #close").click(function() {
 		/* get the position of the close button within the array of all the close buttons
-		and therefore the position of the File object in gFilesToUpload */
+		and therefore the position of the File object in gQueuedFiles */
 		var pos = $("#upload #close").index($(this));
-		gFilesToUpload.splice(pos, 1);
+		gQueuedFiles.splice(pos, 1);
 		buildTorrentUploadFileTable();
 		addTorrentUploadTriggers();
 	});
@@ -38,14 +53,18 @@ function buildTorrentUploadFileTable() {
 	var dropzone = torrentUploadHTML.find("#dropzone");
 	var newTable = $("<table>");
 	
-	if (gFilesToUpload.length == 0) {
+	if (gQueuedFiles.length == 0) {
 		dropzone.show();
 		table.html("");
 	} else {
-		for (i=0; i<gFilesToUpload.length; i++) {
+		for (i=0; i<gQueuedFiles.length; i++) {
 			var row = $("<tr>");
 			var closeIcon = xIcon.clone().attr("width", "18px").attr("height", "18px");
-			row.append($("<td>").text(gFilesToUpload[i].fileName));
+			var cellHTML = $("<span>").text(gQueuedFiles[i].file.name);
+			if (gQueuedFiles[i].valid == false) {
+				cellHTML.append($("<b>").addClass("result_failed").text(" (Error: " + gQueuedFiles[i].reason + ")"));
+			}
+			row.append($("<td>").html(cellHTML));
 			row.append($("<td>").append(closeIcon));
 			newTable.append(row);
 		}
@@ -53,31 +72,85 @@ function buildTorrentUploadFileTable() {
 		dropzone.hide();
 	}
 	
-	torrentUploadHTML.find("span").eq(-1).text("Torrents Selected: " + gFilesToUpload.length);
+	setTorrentUploadStatus("Torrents Selected: " + gQueuedFiles.length);
 }
 
+function setTorrentUploadStatus(text) {
+	$("#upload_status").text(text);
+}
+function validateFile(file) {
+	console.log("validateFile start");
+	var validExts = [
+		"torrent",
+		"torrent.gz",
+		"torrent.gzip",
+		"zip",
+	];
+	var fileName = file.name.toLowerCase();
+	var fileSize = file.size;
+	var maxFileSize = 4194304; // 4 MB
+	var valid;
+	var reason;
+	var reasons = {
+		BAD_FILE_TYPE : "Only torrent / zip / gzip files allowed",
+		FILE_TOO_LARGE : "File too large",
+	}
+	
+	/* set it as invalid initially with a the reason as BAD_FILE_TYPE
+	then set valid as true if a valid ext is found */
+	valid = false;
+	reason = reasons.BAD_FILE_TYPE;
+	for (i=0; i<validExts.length; i++) {
+		if (fileName.endsWith(validExts[i])) {
+			valid = true;
+			reason = "";
+			break;
+		}
+	}
+	
+	// max size check
+	if (fileSize > maxFileSize) {
+		valid = false;
+		reason = reasons.FILE_TOO_LARGE;
+	}
+	
+	var retMap = {
+		"file" : file,
+		"valid" : valid,
+		"reason" : reason,
+	}
+	return(retMap);
+}
+
+function queueFiles(files) {
+	/* 
+	I have no idea why this for loop doesn't work, so im using a while loop instead.
+	but im going to leave this here as a reminder for why javascript sucks so hard
+	for(i=0; i<files.length; i++) {
+		gQueuedFiles.push(validateFile(files[i]));
+	}*/
+	var i = 0;
+	while (files[i] != undefined) {
+		gQueuedFiles.push(validateFile(files[i]));
+		i++;
+	}
+}
 function handleFileSelect(evt) {
     var files = evt.target.files; // FileList object
-	for(i=0; i<files.length; i++) {
-		gFilesToUpload.push(files[i]);
-	}
+	queueFiles(files);
 	buildTorrentUploadFileTable();
 }
 function onDragOver(evt) {
   evt.stopPropagation();
   evt.preventDefault();
-  console.log("onDragOver");
-  //console.log(evt);
   evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
 }
+
 function handleFileDrop(e) {
 	e.stopPropagation();
 	e.preventDefault();
-	console.log("handleFileDrop");
 	var files = e.dataTransfer.files;
-	for(i=0; i<files.length; i++) {
-		gFilesToUpload.push(files[i]);
-	}
+	queueFiles(files);
 	
 	if (isDropDownActive()) {
 		updateTorrentUploadForm();
