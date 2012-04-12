@@ -31,7 +31,7 @@ setup(
     author_email='chris@chrisjlucas.com',
     maintainer='Chris Lucas',
     maintainer_email='chris@chrisjlucas.com',
-    description='An rTorrent web interface with a focus on speed and responsiveness',
+    description='An rTorrent web interface with a focus on simplicity, speed and responsiveness',
     long_description=read("README.md"),
     keywords="rtorrent p2p web ajax",
     license="MIT",
