@@ -11,7 +11,7 @@ var gRpcIdArray = [];
 var gRpcIdArrayCurrentView = [];
 var gFiltersArray = {};
 var gClientInfo = {};
-var gFilesToUpload = [];
+var gQueuedFiles = [];
 var gErrorCode = 0;
 
 var iconColorIdle = "#2d2d2d";
@@ -1093,5 +1093,13 @@ function refreshRows() {
 		log("refreshing rows...");
 		var data = simpleAjaxCall("GET", "/get_torrents", "");
 		processTorrentData(data);
+	}
+}
+
+String.prototype.endsWith = function(matchStr) {
+	if (this.substr(0 - matchStr.length) == matchStr) {
+		return(true);
+	} else {
+		return(false);
 	}
 }
