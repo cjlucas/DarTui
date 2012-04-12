@@ -8,6 +8,7 @@ class ConfigDir:
     def __init__(self, config_path):
         self.config_path = os.path.abspath(config_path)
         if not os.path.isdir(self.config_path): os.makedirs(self.config_path)
+        self._create_dirs()
         
         self.db_name = "dartui.db"
         self.db_path = os.path.join(self.config_path, self.db_name)
@@ -32,6 +33,14 @@ class ConfigDir:
                 db = self.get_db(sql.tables[table]) # this will create the table if it doesn't already exist
                 if sql.tables[table].version < self.table_versions[table]: db.update_table_struct()
                 elif table == "settings" and update_settings_table: db.update_table_struct()
+                
+    def _create_dirs(self):
+        DIRS = ("torrent_cache",)
+        for d in DIRS:
+            dpath = os.path.join(self.config_path, d)
+            if not os.path.isdir(dpath): 
+                print("creating dir: {0}".format(dpath))
+                os.mkdir(dpath)
 
     def get_table_versions(self):
         table_versions = {}
@@ -73,7 +82,7 @@ class ConfigDir:
                         
         return(self.rt_url)
         
-    def get_rt_connection(self): # TODO: rename?
+    def get_rt_connection(self): # TODO: rename this
         self.rt = utils.get_rtorrent_connection(self.get_rt_url())
         self.tracker_cache = {}
         self.old_torrent_cache = []
@@ -84,9 +93,4 @@ class ConfigDir:
         return(sql.Database(self.db_path, table_obj))
     
     def get_rt(self):
-        # httplib (via xmlrpclib) throws CannotSendRequest and ResponseNotReady exceptions
-        # because HttpRequest objects shouldn't be shared as they in rtorrent-python
-        # (see: http://stackoverflow.com/questions/3231543/python-httplib-responsenotready)
-        # because of this, we'll have to work around that until rtorrent-python is fixed
-        # by creating a new RTorrent object everytime
-        return(utils.get_rtorrent_connection(self.get_rt_url()))
+        return(self.rt)
