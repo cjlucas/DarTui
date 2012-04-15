@@ -337,7 +337,7 @@ body {
 	text-align: left;
 	font-size: .9em;
 }
-.dropdown:first-child, .welcome:first-child {
+.welcome, .dropdown {
 	/*padding-top: 20px; handled by .welcome_title */
 	padding-left: 50px;
 	padding-right: 50px;
