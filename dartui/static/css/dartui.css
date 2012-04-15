@@ -301,11 +301,10 @@ body {
 	position: fixed;
 	bottom: 50px;
 	left: -55px;
-	/*height: 100px;*/
 	width: 50px;
 	z-index: 1;
 	background-color: #2d2d2d;
-	/*padding-top: 10px;*/
+	padding-top: 10px;
 	padding-bottom: 10px;
 	padding-right: 5px;
 	-moz-border-radius-topright: 20px;
