@@ -1,0 +1,7 @@
+CREATE TABLE ip2nation (
+	 "ip" integer(11,0) NOT NULL DEFAULT 0,
+	 "country" text(2,0) NOT NULL,
+	PRIMARY KEY("ip")
+);
+
+CREATE INDEX "ip2nation_ip" ON ip2nation (ip ASC);

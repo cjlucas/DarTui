@@ -1,0 +1,24 @@
+<div class="settings">
+	<form id="settings" method="post" action="/set_settings" name="settings">
+		<h1>RTorrent Settings</h1>
+		<label>Host <span class="default_value">(Default: localhost)</span></label><input type="text" name="host" /><br>
+		<label>Port <span class="default_value">(Default: 80)</span></label><input type="text" name="port" /><br>
+		<label>Username <span class="default_value">(optional)</span></label><input type="text" name="username" /><br>
+		<label>Password <span class="default_value">(optional)</span></label><input type="password" name="password" /><br>
+		<input type="button" value="Test Connection" class="test_conn_button"><span id="conn_test_results"></span>
+		<h1>DarTui Settings</h1>
+		<label>Refresh Rate</label><select name="refresh_rate">
+			<option value="5">5 seconds</option>
+			<option value="10">10 seconds</option>
+			<option value="20">20 seconds</option>
+			<option value="30">30 seconds</option>
+			<option value="60">1 minute</option>
+			<option value="120">2 minutes</option>
+			<option value="300">5 minutes</option>
+		</select><br>
+		<label>Disk Usage Path <span class="default_value">(Default: /)</span></label><input type="text" name="du_path" /><br>
+		<label>Show Torrent Age</label><input type="checkbox" name="show_torrent_age" /><br>
+		<label>Debug Mode</label><input type="checkbox" name="debug" /><br>
+		<input type="submit" value="Submit">
+	</form>
+</div>

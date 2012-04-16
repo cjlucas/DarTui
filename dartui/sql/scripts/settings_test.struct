@@ -1,0 +1,10 @@
+CREATE TABLE "settings_test" (
+        "key" text NOT NULL,
+        "value" text,
+        PRIMARY KEY("key")
+        );
+        
+BEGIN;
+COMMIT;
+        
+CREATE UNIQUE INDEX "settings_test_key" ON settings_test (key);

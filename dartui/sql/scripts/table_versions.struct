@@ -1,0 +1,7 @@
+CREATE TABLE "table_versions" (
+	"name" text NOT NULL,
+	"version" real NOT NULL,
+	PRIMARY KEY("name")
+);
+
+CREATE UNIQUE INDEX "table_versions_name" ON "table_versions" (name ASC);

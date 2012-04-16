@@ -25,13 +25,13 @@ classifiers = [
 
 setup(
     name="DarTui",
-    version="1.0.0",
+    version="1.1.0",
     url='https://github.com/cjlucas/dartui',
     author='Chris Lucas',
     author_email='chris@chrisjlucas.com',
     maintainer='Chris Lucas',
     maintainer_email='chris@chrisjlucas.com',
-    description='An rTorrent web interface with a focus on speed and responsiveness',
+    description='An rTorrent web interface with a focus on simplicity, speed and responsiveness',
     long_description=read("README.md"),
     keywords="rtorrent p2p web ajax",
     license="MIT",

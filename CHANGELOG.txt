@@ -1,3 +1,13 @@
+v1.1.0 (April 16, 2012)
+-----------------------
+- added: torrent upload module
+- added: torrent filter "active"
+
+- change: converted all UI elements to svg
+
+- fixed: an issue that caused batch action keyboard shortcuts to break (Issue #1) 
+- fixed: dropdowns are now centered properly
+
 v1.0.0 (March 10, 2012)
 -----------------------
 - added torrent information (number of total/filtered/selected torrents) to footer

@@ -9,12 +9,14 @@ $def with (torrents_json, settings_json)
 		<script type="text/javascript" src="/static/js/jquery-ui-1.8.16.custom.min.js"></script>
 		<script type="text/javascript" src="/static/js/jquery.ba-dotimeout.min.js"></script>
 		<script type="text/javascript" src="/static/js/dartui.js"></script>
+		<script type="text/javascript" src="/static/js/dartui.builders.js"></script>
+		<script src="/static/js/jquery.fileupload.js"></script>
 		<title></title>
 	</head>
 	<body>
+		<div class="dropdown"></div>
 		<div class="shadow"></div>
 		<div class="wrapper">
-			<div class="dropdown"></div>
 			<div class="header"></div>
 			<div class="batch_actions"></div>
 			<div class="filter_menu"></div>
@@ -27,7 +29,7 @@ $def with (torrents_json, settings_json)
 				torrentData = $:torrents_json;
 				gSettingsArray = $:settings_json;
 				gClientInfo = torrentData["client_info"];
-				$$("title").text("DarTui :: " + document.location.host);
+				$$("title").text(document.location.host + " | DarTui");
 				addSortHeader();
 				buildBatchActionsMenu();
 				processTorrentData(torrentData);

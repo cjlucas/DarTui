@@ -5,6 +5,7 @@ import rtorrent
 import formatters
 import common
 import utils
+import sql
 
 to_json = utils.to_json
 
@@ -115,10 +116,7 @@ def get_torrents_and_update_cache():
     rt = common.conf.get_rt()
     if rt is not None:
         common.conf.old_torrent_cache = common.conf.torrent_cache
-        try:
-            common.conf.torrent_cache = rt.get_torrents()
-        except: # workaround for httplib.ResponseNotReady
-            pass
+        common.conf.torrent_cache = rt.get_torrents()
         manage_tracker_cache()
     return(common.conf.torrent_cache)
     
@@ -151,3 +149,55 @@ def get_torrent(rpc_id):
     t = rtorrent.common.find_torrent(rpc_id, rt.torrents)
     if t != -1: return(t)
     else: return(None)
+
+def save_torrent_file(tf):
+    torrent_cache_dir = os.path.join(common.conf.config_path, "torrent_cache")
+    torrent_filename = "{0}.{1}.torrent".format(
+        os.path.splitext(utils.safe_filename(tf.name))[0],
+        tf.info_hash)
+        
+    torrent_file_abspath = os.path.join(torrent_cache_dir, torrent_filename)
+    if not os.path.exists(torrent_file_abspath):
+        with open(torrent_file_abspath, "wb") as fp:
+            tf.seek(0)
+            fp.write(tf.read())
+            
+def load_torrent(tf, dest_path):
+    rt = common.conf.get_rt()
+    
+    t = rt.load_torrent(tf.read(), start=False)
+    t.set_directory(dest_path)
+    t.start()
+    
+    return(t)
+        
+def handle_uploaded_file(f, dest_path):
+    """
+    Inputs:
+      f -- cgi.FileStorage object
+      upload_dir -- directory where the torrent will download
+    """
+    torrent_files = utils.get_torrent_files(f)
+
+    for tf in torrent_files:
+        load_torrent(tf, dest_path)
+        save_torrent_file(tf)
+        tf.close()
+        
+        
+def add_recent_torrent_dest(d):
+    directory = d.rstrip(os.sep)
+    db = common.conf.get_db(sql.tables["recent_torrent_dests"])
+    db.delete_rows(path=directory)
+    db.insert_row(path=directory)
+    db.close()
+    
+    # update recent upload dirs
+    common.recent_torrent_dests = get_recent_torrent_dests()
+    
+def get_recent_torrent_dests():
+    db = common.conf.get_db(sql.tables["recent_torrent_dests"])
+    rows = db.query("SELECT * FROM recent_torrent_dests ORDER BY id DESC LIMIT 0,10")
+    db.close()
+    
+    return([r["path"] for r in rows])

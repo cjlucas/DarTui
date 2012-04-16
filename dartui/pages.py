@@ -51,12 +51,12 @@ class SetSettings:
     def POST(self):
         args = web.input()
         settings = {}
-        for key, data_type in sql.Database.DATA_TYPES.items():
+        for key, data_type in sql.tables["settings"].default_types.items():
             if data_type == bool:
                 # for options that use checkboxes (bool types)
                 # if they're unchecked, the key won't be in args
-                # if checked, the key will be in args with the value of "checked"
-                if key in args and args[key] == "checked":
+                # if checked, the key will be in args with the value of "checked" or "on"
+                if key in args and args[key] in ("checked", "on"):
                     settings[key] = True
                 else:
                     settings[key] = False
@@ -87,9 +87,9 @@ class SetSettings:
         
 class GetSettings:
     def main(self):
-        db = common.conf.get_db()
-        settings = db.get_settings()
-        db.close()
+        #db = common.conf.get_db(sql.tables["settings"])
+        settings = common.conf.settings
+        #db.close()
         # remove sensitive info
         if settings["password"] is not None:
             settings["password"] = "*" * len(settings["password"])
@@ -112,10 +112,7 @@ class GetTorrents:
         json_data["error_msg"] = ""
         
         if rt is not None:
-            try:
-                rt.update()
-            except: # workaround for httplib.ResponseNotReady
-                pass
+            rt.update()
             torrents = actions.get_torrents_and_update_cache()
             json_data["trackers"] = common.conf.tracker_cache
             
@@ -146,14 +143,15 @@ class GetTorrents:
                 json_data["client_info"]["client_version"] = rt.client_version
                 json_data["client_info"]["library_version"] = rt.library_version
                 json_data["client_info"]["dartui_version"] = common.__version__
+                json_data["client_info"]["recent_torrent_dests"] = common.recent_torrent_dests
         else:
             json_data["error_code"] = 1
-            json_data["error_msg"] = "Could not connect to rTorrent instance."
+            json_data["error_msg"] = "Couldn't connect to rTorrent."
       
         return(to_json(json_data))
         
     def GET(self):
-        """ only call process_output() if data is being sent to immediately to browser"""
+        """only call process_output() if data is being sent to immediately to browser"""
         return(process_output(self.main()))
         
 class TorrentAction:
@@ -199,3 +197,40 @@ class TestConnection:
         url = utils.build_url(host, port, username, password)
         conn_status = utils.test_xmlrpc_connection(url)
         return(process_output(to_json(conn_status)))
+        
+class FileUploadTest:
+    def GET(self):
+        return(render.fileupload())
+
+class FileUploadAction:
+    def POST(self):
+        rdata = {}
+        rdata["success"] = True
+        rdata["err_msg"] = ""
+        args = web.input()
+        files = []
+        
+        # get user's destination choice
+        if args["dest_choice"] == "text":
+            dest_path = args["dest_path_text"]
+        elif args["dest_choice"] == "recents":
+            dest_path = args["dest_path_select"]
+        
+        try:
+            files = web.webapi.rawinput()["files"]
+            if not isinstance(files, list): files = [files] # when only one file is uploaded
+        except:
+            rdata["success"] = False
+            rdata["err_msg"] = "No files added"
+            
+        if not common.conf.is_local() or os.path.exists(dest_path): # only validate upload_dir if is_local() is true
+            if dest_path != common.conf.settings["dest_path"]: # don't add if using default upload path
+                 actions.add_recent_torrent_dest(dest_path)
+            
+            for f in files:
+                actions.handle_uploaded_file(f, dest_path)
+        else:
+            rdata["success"] = False
+            rdata["err_msg"] = "Destination not found"
+            
+        return(process_output(to_json(rdata)))

@@ -1,0 +1,22 @@
+<h1>Upload Torrents</h1>
+<div id="upload">
+	<form id="torrent_upload" method="POST" enctype="multipart/form-data" action="/file_upload_action">
+		<div id="dropzone">Drop files here</div>
+		<table></table>
+		<input type="file" id="files" name="files[]" multiple />
+		<b id="upload_note">NOTE: Only .torrent or .zip files less than 4MB allowed.</b>
+		<h2>Select a destination</h2>
+		<div>
+			<input type="radio" name="dest_choice" id="text" value="text" checked/><label for="text"><input type="text" id="text" name="dest_path_text" size="30"/></label>
+			<input type="radio" name="dest_choice" id="recents" value="recents"/><label for="recents">
+				<select id="recents" name="dest_path_select">
+					<optgroup label="Recent Destinations"></optgroup>
+				</select>
+			</label><br />
+			<div style="float: right; display: inline-block;">
+				<span id="upload_status"></span>
+				<input type="submit" value="Upload" /><input type="button" value="Cancel" />
+			</div>
+		</div>
+	</form>
+</div>
