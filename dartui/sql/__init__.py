@@ -2,6 +2,7 @@ import sqlite3
 import gzip
 import os
 import time
+import web
 
 import converters
 
@@ -41,6 +42,9 @@ class Table(object):
             query = "INSERT OR IGNORE INTO {0} VALUES (?, ?)".format(self.name)
             args = self.default_values.items()
             return(sql_method, (query, args))
+        else:
+            # if no defaults found, just return None
+            return(None)
     
     def process_results(self, data):
         return(data)
@@ -188,8 +192,9 @@ class Database(object):
         
     def insert_defaults(self):
         self._require_table_object()
-        print("inserting default values, this may take some time...")
-        self._call_sql_method(*self.table.get_insert_defaults_query())
+        if self.table.get_insert_defaults_query() is not None:
+            print("inserting default values, this may take some time...")
+            self._call_sql_method(*self.table.get_insert_defaults_query())
         
     def update_table_contents(self, data):
         self._require_table_object()
@@ -200,6 +205,32 @@ class Database(object):
         data = self.query("SELECT * FROM {0}".format(self.table.name))
         data = self.table.process_results(data)
         return(data)
+        
+    def insert_row(self, **kwargs):
+        """Simple frontend for the INSERT query"""
+        query = "INSERT INTO {0} ({1}) VALUES ({2})".format(
+                                                    self.table.name,
+                                                    ",".join(kwargs.keys()),
+                                                    ",".join(("?",) * len(kwargs.keys()))
+                                                    )
+        values = kwargs.values()
+        
+        self._execute(query, values)
+        
+    def delete_rows(self, **kwargs):
+        """
+        Simple frontend for the DELETE query
+        
+        note: only exact matches supported
+        """
+        query = "DELETE FROM {0} WHERE {1}".format(
+                                            self.table.name,
+                                            web.db.sqlwhere(kwargs).query(paramstyle="qmark")
+                                            )
+        
+        values = kwargs.values()
+        self._execute(query, values)                
+        
         
     def query(self, query, values=()):
         self._execute(query, values)
@@ -249,6 +280,16 @@ tables = {
             "show_welcome"      : bool,
             "du_path"           : str,
         },
+    ),
+    "recent_torrent_dests" : Table(
+      name = "recent_torrent_dests",
+      version = 1.0,
+      preserve_data = True,
+      default_values = {},
+      default_types = {
+          "id"      : int,
+          "path"    : str,
+      }  
     ),
     #"ip2nation" : Table(
     #    name = "ip2nation",
