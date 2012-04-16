@@ -341,6 +341,7 @@ function buildHeader(hideIcons) {
 	$(".icons svg#upload").click(function() {
 		showDropDown(updateTorrentUploadForm());
 		addTorrentUploadTriggers();
+		setDefaultTorrentDestination();
 	});
 }
 

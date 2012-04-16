@@ -5,6 +5,7 @@ import rtorrent
 import formatters
 import common
 import utils
+import sql
 
 to_json = utils.to_json
 
@@ -161,19 +162,42 @@ def save_torrent_file(tf):
             tf.seek(0)
             fp.write(tf.read())
             
-def load_torrent(tf):
+def load_torrent(tf, dest_path):
     rt = common.conf.get_rt()
     
-    return(rt.load_torrent(tf.read(), "raw"))
+    t = rt.load_torrent(tf.read(), start=False)
+    t.set_directory(dest_path)
+    t.start()
+    
+    return(t)
         
-def handle_uploaded_file(f):
+def handle_uploaded_file(f, dest_path):
     """
     Inputs:
       f -- cgi.FileStorage object
+      upload_dir -- directory where the torrent will download
     """
     torrent_files = utils.get_torrent_files(f)
 
     for tf in torrent_files:
-        load_torrent(tf)
+        load_torrent(tf, dest_path)
         save_torrent_file(tf)
         tf.close()
+        
+        
+def add_recent_torrent_dest(d):
+    directory = d.rstrip(os.sep)
+    db = common.conf.get_db(sql.tables["recent_torrent_dests"])
+    db.delete_rows(path=directory)
+    db.insert_row(path=directory)
+    db.close()
+    
+    # update recent upload dirs
+    common.recent_torrent_dests = get_recent_torrent_dests()
+    
+def get_recent_torrent_dests():
+    db = common.conf.get_db(sql.tables["recent_torrent_dests"])
+    rows = db.query("SELECT * FROM recent_torrent_dests ORDER BY id DESC LIMIT 0,10")
+    db.close()
+    
+    return([r["path"] for r in rows])

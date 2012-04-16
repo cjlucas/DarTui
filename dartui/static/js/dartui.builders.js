@@ -1,5 +1,6 @@
 function updateTorrentUploadForm() {
 	buildTorrentUploadFileTable();
+	addRecentDestinations();
 	return(torrentUploadHTML);
 }
 function resetTorrentUploadForm() {
@@ -9,6 +10,7 @@ function resetTorrentUploadForm() {
 }
 function addTorrentUploadTriggers() {
 	document.getElementById('files').addEventListener('change', handleFileSelect, false);
+	$("#torrent_upload").unbind();
 	$("#torrent_upload").submit(function(e) {
 		e.preventDefault();
 		// filter to get only valid files
@@ -22,10 +24,18 @@ function addTorrentUploadTriggers() {
 		$(this).bind("fileuploadprogress", function(e, data) {
 			setTorrentUploadStatus("Uploading... " + parseInt((data.loaded / data.total) * 100) + "% complete.");
 		});
+		
 		$(this).bind("fileuploaddone", function(e, data) {
 			log("fileuploaddone");
-			resetTorrentUploadForm();
+			var rdata = jQuery.parseJSON(data.result);
+			if (rdata.success == true) {
+				resetTorrentUploadForm();
+				refreshRows();
+			} else {
+				setTorrentUploadStatus("Error: " + rdata.err_msg, true);
+			}
 		});
+		
 		$(this).bind("fileuploadalways", function(e, data) {
 			log("fileuploadalways");
 			$(this).fileupload("destroy");
@@ -33,6 +43,7 @@ function addTorrentUploadTriggers() {
 		
 	});
 	
+	$("#torrent_upload input[value='Cancel']").unbind();
 	$("#torrent_upload input[value='Cancel']").click(function() {
 		resetTorrentUploadForm();
 	});
@@ -74,9 +85,37 @@ function buildTorrentUploadFileTable() {
 	
 	setTorrentUploadStatus("Torrents Selected: " + gQueuedFiles.length);
 }
-
+function addRecentDestinations() {
+	var optgroupElem = torrentUploadHTML.find("optgroup").html("");
+	var dests = gClientInfo["recent_torrent_dests"];
+	var recentsInputElem = torrentUploadHTML.find("input#recents[type='radio']")
+	var recentsSelectElem = torrentUploadHTML.find("select")
+	
+	
+	if (dests.length > 0) {
+		recentsInputElem.prop("disabled", false);
+		recentsSelectElem.prop("disabled", false);
+		for (i=0; i<dests.length; i++) {
+			optgroupElem.append($("<option>").attr("value", dests[i]).text(dests[i]));
+		}
+	} else {
+		// don't give user anything to click
+		recentsInputElem.prop("disabled", true);
+		recentsSelectElem.prop("disabled", true);
+		optgroupElem.append($("<option>").text("No recent destinations found"));	
+	}
+}
+function setDefaultTorrentDestination() {
+	torrentUploadHTML.find("input[id='text'][type='text']").attr("value", gSettingsArray["dest_path"]);
+}
 function setTorrentUploadStatus(text) {
+	var error = (error != undefined) ? error : false;
 	$("#upload_status").text(text);
+	if (error) {
+		$("#upload_status").addClass("result_failed");
+	} else {
+		$("#upload_status").removeClass("result_failed");
+	}
 }
 function validateFile(file) {
 	console.log("validateFile start");
@@ -156,8 +195,9 @@ function handleFileDrop(e) {
 		updateTorrentUploadForm();
 	} else {
 		showDropDown(updateTorrentUploadForm());
-		addTorrentUploadTriggers();
+		setDefaultTorrentDestination();
 	}
+	addTorrentUploadTriggers();
 }
 
 document.addEventListener('dragover', onDragOver, false);

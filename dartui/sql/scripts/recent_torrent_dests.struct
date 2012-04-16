@@ -1,0 +1,6 @@
+CREATE TABLE "main"."recent_torrent_dests" (
+	 "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+	 "path" text NOT NULL
+);
+
+CREATE UNIQUE INDEX "main"."recent_torrent_dests_id" ON "recent_torrent_dests" (id DESC);

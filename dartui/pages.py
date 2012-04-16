@@ -143,6 +143,7 @@ class GetTorrents:
                 json_data["client_info"]["client_version"] = rt.client_version
                 json_data["client_info"]["library_version"] = rt.library_version
                 json_data["client_info"]["dartui_version"] = common.__version__
+                json_data["client_info"]["recent_torrent_dests"] = common.recent_torrent_dests
         else:
             json_data["error_code"] = 1
             json_data["error_msg"] = "Couldn't connect to rTorrent."
@@ -203,8 +204,33 @@ class FileUploadTest:
 
 class FileUploadAction:
     def POST(self):
-        # TODO: return JSON data detailing success/failure of adding files
-        files = web.webapi.rawinput()["files"]
-        if not isinstance(files, list): files = [files] # when only one file is uploaded
-        for f in files:
-            actions.handle_uploaded_file(f)
+        rdata = {}
+        rdata["success"] = True
+        rdata["err_msg"] = ""
+        args = web.input()
+        files = []
+        
+        # get user's destination choice
+        if args["dest_choice"] == "text":
+            dest_path = args["dest_path_text"]
+        elif args["dest_choice"] == "recents":
+            dest_path = args["dest_path_select"]
+        
+        try:
+            files = web.webapi.rawinput()["files"]
+            if not isinstance(files, list): files = [files] # when only one file is uploaded
+        except:
+            rdata["success"] = False
+            rdata["err_msg"] = "No files added"
+            
+        if not common.conf.is_local() or os.path.exists(dest_path): # only validate upload_dir if is_local() is true
+            if dest_path != common.conf.settings["dest_path"]: # don't add if using default upload path
+                 actions.add_recent_torrent_dest(dest_path)
+            
+            for f in files:
+                actions.handle_uploaded_file(f, dest_path)
+        else:
+            rdata["success"] = False
+            rdata["err_msg"] = "Destination not found"
+            
+        return(process_output(to_json(rdata)))

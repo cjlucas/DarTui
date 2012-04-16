@@ -3,6 +3,7 @@ import os
 import sql
 import common
 import utils
+import actions
 
 class ConfigDir:
     def __init__(self, config_path):
@@ -31,7 +32,7 @@ class ConfigDir:
         for table in sql.tables:
             if table != "table_versions" and table in self.table_versions: # already handled by get_table_versions
                 db = self.get_db(sql.tables[table]) # this will create the table if it doesn't already exist
-                if sql.tables[table].version < self.table_versions[table]: db.update_table_struct()
+                if sql.tables[table].version > self.table_versions[table]: db.update_table_struct()
                 elif table == "settings" and update_settings_table: db.update_table_struct()
                 
     def _create_dirs(self):
@@ -62,7 +63,8 @@ class ConfigDir:
         settings["show_welcome"] = False # no need to show welcome screen after user has updated settings
         db = self.get_db(sql.tables["settings"])
         db.update_table_contents(settings)
-        self.settings = db.get_table_contents()
+        
+        self.refresh()
         
     def refresh(self):
         self._set_default_values()
@@ -71,6 +73,12 @@ class ConfigDir:
         self.settings = db.get_table_contents()
         
         self.get_rt_connection()
+        
+        # get rt specific settings
+        if self.rt is not None:
+            self.settings["dest_path"] = self.rt.directory
+            self.settings["upload_rate"] = self.rt.upload_rate
+            self.settings["download_rate"] = self.rt.download_rate
         
     def get_rt_url(self):
         self.rt_url = utils.build_url(
@@ -94,3 +102,8 @@ class ConfigDir:
     
     def get_rt(self):
         return(self.rt)
+        
+    def is_local(self):
+        """Checks if DarTui is running on the same system as rtorrent"""
+        VALID_LOCAL_ADDRS = ("localhost", "127.0.0.1", "0.0.0.0")
+        return(self.settings["host"].lower() in VALID_LOCAL_ADDRS)
