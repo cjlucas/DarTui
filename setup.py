@@ -8,7 +8,7 @@ def read(fname):
 
 required_pkgs = [
     "web.py>=0.36",
-    "rtorrent-python>=0.2.7",
+    "rtorrent-python>=0.2.9",
     "simplejson",
 ]
 
