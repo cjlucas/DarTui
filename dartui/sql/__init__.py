@@ -90,6 +90,8 @@ class KeyValueTable(Table):
                 if self.default_types[key] == bool:
                     if value == "0": value = False
                     elif value == "1": value = True
+                if "port" in key:
+                    value = 80
                 if self.default_types[key] == int: value = int(value)
             
                 data_dict[key.encode()] = value

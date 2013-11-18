@@ -70,6 +70,7 @@ class ConfigDir:
         self._set_default_values()
         
         db = self.get_db(sql.tables["settings"])
+        
         self.settings = db.get_table_contents()
         
         self.get_rt_connection()
