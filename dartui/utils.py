@@ -77,15 +77,16 @@ def test_xmlrpc_connection(url):
         conn_status["err_msg"] = e.errmsg
     except xmlrpclib.ResponseError:
         conn_status["err_msg"] = "Caught ResponseError"
-    except:
-        conn_status["err_msg"] = "Unknown Error"
+    except Exception as e:
+        conn_status["err_msg"] = "Unknown Error %s" % e
         
     return(conn_status)
     
 def get_rtorrent_connection(url):
     try:
         return(rtorrent.RTorrent(url))
-    except:
+    except Exception as e:
+        print "get_rtorrent connection %s %s" % (e, url)
         return(None)
     
 def safe_filename(s):

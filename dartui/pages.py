@@ -38,7 +38,7 @@ def process_output(data):
 
 class Index:
     def GET(self):
-        if common.conf.settings["show_welcome"]:
+        if "show_welcome" in common.conf.settings and common.conf.settings.get("show_welcome"):
             raise(web.seeother("/welcome"))
         else:
             return(process_output(render.index(GetTorrents().main(), GetSettings().main())))
@@ -195,6 +195,7 @@ class TestConnection:
         password = args.get("password", None)
         
         url = utils.build_url(host, port, username, password)
+        print url
         conn_status = utils.test_xmlrpc_connection(url)
         return(process_output(to_json(conn_status)))
         

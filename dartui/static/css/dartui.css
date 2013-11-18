@@ -138,7 +138,6 @@ body {
 	overflow: hidden;
 	display: block;
 	position: relative;
-				
 	border-left-width: 1px;
 	border-top-width: 1px;
 	border-right-width: 1px;
@@ -239,7 +238,7 @@ body {
 
 .filter_menu {
 	position: fixed;
-	right: -150px;
+	right: 0px;
 	top: 0;
 	/*display: none;*/
 	z-index: 1;
