@@ -29,6 +29,28 @@ To Install:
 To Run:
 ```$ dartui```
 
+INSTALLATION ON NGINX
+---------------------
+
+<pre>
+server {
+        listen      80;
+        server_name localhost;
+
+        access_log  /var/log/nginx/rtorrent-access.log; 
+        error_log  /var/log/nginx/rtorrent-error.log info; 
+
+        location  / {
+            proxy_pass http://localhost:8080;
+        }
+
+        location ^~ /RPC2 {
+            include scgi_params;
+            scgi_pass  127.0.0.1:5000;
+        }
+    }
+</pre>
+
 TODO
 ----
 - Better logging
